@@ -15,36 +15,18 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item">
-            <a href="#" class="nav-link">Home</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">Customers</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">Transfer Funds</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">All Transactions</a>
+            <a href="/" class="nav-link">Home</a>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-md-0">
           <li class="nav-item">
-            <a href="#" class="nav-link">Login / Register</a>
-          </li>
-          <li class="nav-item d-flex align-items-center">
-            <span class="navbar-text me-3">user@example.com (EMPLOYEE)</span>
+            <a href="/register" class="nav-link">Register</a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Profile</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">Search Customer's IBAN</a>
+            <a href="/login" class="nav-link">Login</a>
           </li>
           <li class="nav-item">
             <button class="btn btn-link nav-link">Logout</button>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">ATM</a>
           </li>
         </ul>
       </div>

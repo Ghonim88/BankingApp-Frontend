@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from './axios-auth';  // Make sure you have the correct Axios instance setup
-//import { jwtDecode } from 'jwt-decode';
+import axios from './axios-auth';  
 
 export const useCustomerRegistrationStore = defineStore('CustomerRegistrationStore', {
   state: () => ({

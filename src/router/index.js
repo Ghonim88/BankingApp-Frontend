@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../components/Home.vue';
 import Register from '../components/Register.vue';
+import Login from '../components/Login.vue';
+
 // import PageNotFound from "@/components/pages/PageNotFound.vue";
 // import TransferFunds from '../components/pages/TransferFunds.vue';
 // import EmployeePanelPage from "../components/pages/EmployeePanelPage.vue";
@@ -17,6 +19,7 @@ const router = createRouter({
   routes: [
      { path: '/', component: Home },
      { path: '/register', component: Register },
+     { path: '/login', component:Login },
     // { path: '/404', component: PageNotFound },
     // { path: '/login-register', component: LoginRegister },
     // { path: '/employeepanel', component: EmployeePanelPage, meta: { requiresAuth: true, role: 'Employee' } },
