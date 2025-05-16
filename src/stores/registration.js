@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from './axios-auth';  
+import axios from '../axios-auth';  
 
 export const useCustomerRegistrationStore = defineStore('CustomerRegistrationStore', {
   state: () => ({
@@ -25,7 +25,6 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
             console.log('Registration Response:', response);
             const data = response.data;
             if (data) {
-              // Assuming the response contains customer data and a success status
               this.email = data.email;
               this.firstName = data.firstName;
               this.lastName = data.lastName;

@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-dark mb-4">
+  <nav class="navbar navbar-expand-md navbar-dark">
     <div class="container-fluid">
       <button
         class="navbar-toggler"
@@ -25,8 +25,8 @@
           <li class="nav-item">
             <a href="/login" class="nav-link">Login</a>
           </li>
-          <li class="nav-item">
-            <button class="btn btn-link nav-link">Logout</button>
+          <li class="nav-item" v-if="isLoggedIn">
+            <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
           </li>
         </ul>
       </div>
@@ -35,10 +35,30 @@
 </template>
 
 <script>
-export default {
+import { defineComponent, computed } from 'vue';
+import { userAuthStore } from '@/stores/user-auth';
+
+export default defineComponent({
   name: "CleanNavbar",
-};
+  setup() {
+    const userAuth = userAuthStore();
+
+    // Computed property to check if the user is logged in
+    const isLoggedIn = computed(() => userAuth.isLoggedIn);
+
+    // Method to handle logout
+    const handleLogout = () => {
+      userAuth.logout();
+    };
+
+    return {
+      isLoggedIn,
+      handleLogout,
+    };
+  },
+});
 </script>
+
 
 <style scoped>
 .navbar {
