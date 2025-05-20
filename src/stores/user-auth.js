@@ -6,13 +6,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
   state: () => ({
     token: localStorage.getItem('token') || '',  // Set token if already in localStorage
      isLoggedIn: !!localStorage.getItem('token'), // Set to true if a token exists
-      firstName: '', 
-      lastName: '',  
-      email: '',     
-      userId: null,  
-      bsn: '',       
-      phoneNumber: '', 
-      accountStatus: '', 
+      user : null
   }),
 
   getters: {
@@ -61,10 +55,8 @@ export const userAuthStore = defineStore('UserAuthStore', {
 
         console.log('Authorization Header:', authorizationHeader);
 
-        const endpoint = role === 'CUSTOMER' ? '/customer/me' : '/employee/me';
-        console.log('Endpoint:', endpoint);
         try {
-          const response = await axios.get(endpoint, {
+          const response = await axios.get('/auth/me', {
             headers: {
               'Content-Type': 'application/json',
               'Authorization':  authorizationHeader,
@@ -72,19 +64,9 @@ export const userAuthStore = defineStore('UserAuthStore', {
           });
         
         // Now store that detailed info
-        const user = response.data;
-        this.firstName = user.firstName;
-        this.lastName = user.lastName;
-        this.email = user.email;
-        this.userId = user.userId;
-       
-  
-        if (role === 'CUSTOMER') {
-          this.bsn = user.bsn;
-          this.phoneNumber = user.phoneNumber;
-          this.accountStatus = user.accountStatus;
-        }
-        console.log('User data fetched successfully:', user);
+        this.user = response.data; 
+     
+        console.log('User data fetched successfully:', this.user);
   
       } catch (err) {
         console.error('Failed to fetch user data:', err);
@@ -99,6 +81,8 @@ export const userAuthStore = defineStore('UserAuthStore', {
     
      localStorage.removeItem('token');
      this.isLoggedIn = false;
+    this.user = null; // Reset the user object
+
       this.$reset();
      window.location.href = '/login';
 

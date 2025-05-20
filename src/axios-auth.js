@@ -5,3 +5,6 @@ const instance = axios.create({
 });
 
 export default instance;
+ 
+
+//TODO: try to store the token here so it is always available and avoid doublicate code

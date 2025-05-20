@@ -3,7 +3,7 @@ import axios from '../axios-auth';
 
 export const useCustomerRegistrationStore = defineStore('CustomerRegistrationStore', {
   state: () => ({
-    // Initial state for customer registration
+    //TODO: try to use a user object here instead of multiple variables
     email: null,
     firstName: null,
     lastName: null,
@@ -16,7 +16,7 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
 
         return new Promise((resolve, reject) => {
           axios
-          .post('customer/register', customerData, {
+          .post('auth/register', customerData, {
             headers: {
               'Content-Type': 'application/json',  
             },

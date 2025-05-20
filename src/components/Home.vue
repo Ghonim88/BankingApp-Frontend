@@ -26,13 +26,16 @@ onMounted(async () => {
   await store.fetchUserData(); // ✅ Load user data after login
 });
 
-const firstName = computed(() => store.firstName);
-const lastName = computed(() => store.lastName);
-const email = computed(() => store.email);
-const userId = computed(() => store.userId);
-const bsn = computed(() => store.bsn);
-const phoneNumber = computed(() => store.phoneNumber);
-const accountStatus = computed(() => store.accountStatus);
+
+// Access user properties through the `user` object
+const user = computed(() => store.user);
+const firstName = computed(() => user.value?.firstName || '');
+const lastName = computed(() => user.value?.lastName || '');
+const email = computed(() => user.value?.email || '');
+const userId = computed(() => user.value?.userId || null);
+const bsn = computed(() => user.value?.bsn || '');
+const phoneNumber = computed(() => user.value?.phoneNumber || '');
+const accountStatus = computed(() => user.value?.accountStatus || '');
 const role = localStorage.getItem('role'); // Get role from localStorage
 </script>
 
