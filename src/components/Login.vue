@@ -1,36 +1,44 @@
 <template>
-  <div class="login-container">
-    <div class="login-form">
-      <h2 class="login-title">Customer Login</h2>
-      <form @submit.prevent="login">
-        <div class="input-group">
-          <label for="email" class="label">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            placeholder="Enter your email"
-            class="input-field"
-            required
-          />
-        </div>
+  <div class="login-page">
+    <!-- Left image section -->
+    <div class="login-left">
+      <img src="@/assets/image/login.png" alt="Login" class="login-image" />
+    </div>
 
-        <div class="input-group">
-          <label for="password" class="label">Password</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            placeholder="Enter your password"
-            class="input-field"
-            required
-          />
-        </div>
+    <!-- Right login form -->
+    <div class="login-right">
+      <div class="form-box">
+        <h2 class="form-title">Customer Login</h2>
+        <form @submit.prevent="login">
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              v-model="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
 
-        <div v-if="error" class="error-message">{{ error }}</div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              v-model="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
 
-        <button type="submit" class="submit-btn" :disabled="isSubmitting">Login</button>
-      </form>
+          <div v-if="error" class="error-message">{{ error }}</div>
+
+          <button type="submit" :disabled="isSubmitting">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -38,11 +46,13 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import { userAuthStore } from '@/stores/user-auth'; 
+import { useRouter } from 'vue-router';
+
 
 export default defineComponent({
   setup() {
     const store = userAuthStore();  // Initialize the store
-
+    const router = useRouter(); // Use Vue Router for navigation
     // Form data
     const email = ref('');
     const password = ref('');
@@ -55,25 +65,25 @@ export default defineComponent({
       try {
         await store.login(email.value, password.value);
 
-        if (store.isLoggedIn) {
+        if (store.token) {
           error.value = '';
+          router.push('/home'); // Redirect to home if already logged in
           // Redirect to dashboard if login is successful
         //  this.$router.push('/dashboard');
         } else {
           error.value = 'Login failed. Please check your credentials.';
         }
       } catch (err) {
-        error.value = err.message;
+        if (err.response && err.response.status === 401) {
+      // You can customize the error message based on status code
+      error.value = 'Invalid email or password. Please try again.';
+    } else {
+      error.value = 'An unexpected error occurred. Please try again later.';
+    }
       } finally {
         isSubmitting.value = false;
       }
     };
-
-    onMounted(() => {
-      if (store.isLoggedIn) {
-     //   this.$router.push('/dashboard');
-      }
-    });
 
     return {
       email,
@@ -86,81 +96,122 @@ export default defineComponent({
 });
 </script>
 
+
 <style scoped>
-.login-container {
+.login-page {
+  display: flex;
+  height: 100vh;
+  background-color: white;
+}
+
+/* Left side */
+.login-left {
+  flex: 1;
+  background-color: #edcb83;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #3498db, #2ecc71);
 }
 
-.login-form {
+.login-image {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Right side */
+.login-right {
+  flex: 1.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
 }
 
-.login-title {
+.form-box {
+  width: 100%;
+  max-width: 500px;
+  padding: 60px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.form-title {
   text-align: center;
-  font-size: 24px;
-  margin-bottom: 30px;
-  color: #2c3e50;
+  margin-bottom: 40px;
+  color: #333;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .input-group {
   margin-bottom: 20px;
 }
 
-.label {
-  font-size: 14px;
-  color: #34495e;
-  margin-bottom: 5px;
+label {
+  display: block;
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 8px;
 }
 
-.input-field {
+input {
   width: 100%;
-  padding: 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
+  padding: 14px;
+  border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
-.input-field:focus {
+input:focus {
+  border-color: #edcb83;
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+  box-shadow: 0 0 4px rgba(237, 203, 131, 0.4);
 }
 
 .error-message {
   color: red;
-  font-size: 0.9rem;
-  margin-top: 10px;
+  font-size: 14px;
   text-align: center;
+  margin-bottom: 10px;
 }
 
-.submit-btn {
+button {
   width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  color: white;
-  background-color: #3498db;
+  padding: 14px;
+  background-color: #edcb83;
+  color: #000;
   border: none;
+  font-size: 18px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-.submit-btn:disabled {
-  background-color: #95a5a6;
+button:hover {
+  background-color: #e0b960;
+}
+
+button:disabled {
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-.submit-btn:hover {
-  background-color: #2980b9;
+/* Responsive */
+@media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-left,
+  .login-right {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .form-box {
+    padding: 20px;
+  }
 }
 </style>

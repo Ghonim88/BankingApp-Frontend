@@ -1,78 +1,29 @@
 <template>
-  <div class="registration-container">
-    <h2>Customer Registration</h2>
-    <form @submit.prevent="registerCustomer">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          v-model="form.email"
-          required
-          placeholder="Customer@gmail.com"
-        />
-      </div>
+  <div class="registration-wrapper">
+    <div class="left-panel">
+      <img src="@/assets/image/register.png" alt="Register" class="register-image" />
+    </div>
+    <div class="right-panel">
+      <div class="registration-container">
+        <h2>Customer Registration</h2>
+        <form @submit.prevent="registerCustomer"> 
+          <div class="form-group" v-for="(label, key) in fields" :key="key">
+            <label :for="key">{{ label }}</label>
+            <input
+              :type="key === 'password' ? 'password' : 'text'"
+              :id="key"
+              v-model="form[key]"
+              required
+              :placeholder="placeholders[key]"
+            />
+          </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          v-model="form.password"
-          required
-          placeholder="Enter password"
-        />
+          <button type="submit" class="btn">Register</button>
+          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
+        </form>
       </div>
-
-      <div class="form-group">
-        <label for="firstName">First Name</label>
-        <input
-          type="text"
-          id="firstName"
-          v-model="form.firstName"
-          required
-          placeholder="Enter first name"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="lastName">Last Name</label>
-        <input
-          type="text"
-          id="lastName"
-          v-model="form.lastName"
-          required
-          placeholder="Enter last name"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="bsn">BSN</label>
-        <input
-          type="text"
-          id="bsn"
-          v-model="form.bsn"
-          required
-          placeholder="Enter BSN"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="phoneNumber">Phone Number</label>
-        <input
-          type="text"
-          id="phoneNumber"
-          v-model="form.phoneNumber"
-          required
-          placeholder="+31612345678"
-        />
-      </div>
-
-      <button type="submit" class="btn">Register</button>
-      <!-- TRY to use Tostify  -->
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div> 
-      <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -92,6 +43,23 @@ export default defineComponent({
       bsn: '',
       phoneNumber: '',
     });
+    // Define field labels and placeholders
+    const fields = {
+      email: 'Email',
+      password: 'Password',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      bsn: 'BSN',
+      phoneNumber: 'Phone Number',
+    };
+    const placeholders= {
+      email: 'customer@gmail.com',
+      password: 'Enter password',
+      firstName: 'Enter first name',
+      lastName: 'Enter last name',
+      bsn: 'Enter BSN',
+      phoneNumber: '+31612345678',
+    };
 
     const registrationStore = useCustomerRegistrationStore();
 
@@ -105,6 +73,11 @@ export default defineComponent({
     // Helper function to validate if a field contains only digits
     const isValidDigits = (value, length) => /^\d{8,9}$/.test(value) && value.length === length;
 
+    // Validates strong password: min 8 chars, uppercase, lowercase, digit, special char
+    const isStrongPassword = (password) => {
+      const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      return pattern.test(password);
+    };            
 
     // Register customer function using the store
     const registerCustomer = async () => {
@@ -112,6 +85,13 @@ export default defineComponent({
         // Reset messages before starting
         errorMessage.value = '';
         successMessage.value = '';
+
+        if (!isStrongPassword(form.value.password)) {
+          errorMessage.value =
+            'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.';
+          return;
+        }
+
         //Phone number validation: Must start with +316 and be 12 digits long
          if (!form.value.phoneNumber.startsWith('+316')) {
           errorMessage.value = 'Phone number must start with +316.';
@@ -179,65 +159,112 @@ export default defineComponent({
       errorMessage,
       successMessage,
       registerCustomer,
+      fields,
+      placeholders,
     };
   },
 });
 </script>
 
-<style scoped>
-.registration-container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ddd;
+ <style scoped>
+.registration-wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.left-panel {
+  flex: 1;
+  background-color: #edcb83;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-image {
+  width: 80%;
+  max-width: 400px;
+  object-fit: cover;
+  transform: scale(1.1); /* Zoom in slightly */
   border-radius: 10px;
-  background-color: #f9f9f9;
+}
+
+.right-panel {
+  flex: 1.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.registration-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 h2 {
   text-align: center;
-  margin-bottom: 20px;
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #2c3e50;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 15px;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
+  padding: 12px;
+  font-size: 15px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
 }
 
-button {
+input:focus {
+  outline: none;
+  border-color: #edcb83;
+  box-shadow: 0 0 5px rgba(237, 203, 131, 0.4);
+}
+
+.btn {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
+  padding: 14px;
+  background-color: #edcb83;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-button:hover {
-  background-color: #0056b3;
+.btn:hover {
+  background-color: #d6b96e;
 }
 
 .error-message {
   color: red;
-  margin-top: 10px;
+  margin-top: 15px;
+  text-align: center;
 }
 
 .success-message {
   color: green;
-  margin-top: 10px;
+  margin-top: 15px;
+  text-align: center;
 }
+
 </style>

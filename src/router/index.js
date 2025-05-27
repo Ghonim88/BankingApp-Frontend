@@ -17,7 +17,7 @@ import Login from '../components/Login.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-     { path: '/', component: Home },
+     { path: '/home', component: Home },
      { path: '/register', component: Register },
      { path: '/login', component:Login },
     // { path: '/404', component: PageNotFound },
