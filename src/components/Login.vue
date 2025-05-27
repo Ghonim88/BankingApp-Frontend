@@ -34,9 +34,7 @@
 
           <div v-if="error" class="error-message">{{ error }}</div>
 
-          <button type="submit" :disabled="isSubmitting">
-            Login
-          </button>
+          <button type="submit" :disabled="isSubmitting">Login</button>
         </form>
       </div>
     </div>
@@ -44,19 +42,18 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
-import { userAuthStore } from '@/stores/user-auth'; 
-import { useRouter } from 'vue-router';
-
+import { defineComponent, ref, onMounted } from "vue";
+import { userAuthStore } from "@/stores/user-auth";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   setup() {
-    const store = userAuthStore();  // Initialize the store
+    const store = userAuthStore(); // Initialize the store
     const router = useRouter(); // Use Vue Router for navigation
     // Form data
-    const email = ref('');
-    const password = ref('');
-    const error = ref('');
+    const email = ref("");
+    const password = ref("");
+    const error = ref("");
     const isSubmitting = ref(false);
 
     const login = async () => {
@@ -66,20 +63,31 @@ export default defineComponent({
         await store.login(email.value, password.value);
 
         if (store.token) {
-          error.value = '';
-          router.push('/home'); // Redirect to home if already logged in
+          //error.value = '';
+
+          await store.fetchUserData(); // ⬅️ Fetch user details from backend
+
+          const role = store.user?.role;
+
+          if(role === 'EMPLOYEE') {
+            router.push("/transactions");
+          } else if (role === 'CUSTOMER') {
+            router.push("/home");
+          }
+
+          //router.push("/home"); // Redirect to home if already logged in
           // Redirect to dashboard if login is successful
-        //  this.$router.push('/dashboard');
+          //  this.$router.push('/dashboard');
         } else {
-          error.value = 'Login failed. Please check your credentials.';
+          error.value = "Login failed. Please check your credentials.";
         }
       } catch (err) {
         if (err.response && err.response.status === 401) {
-      // You can customize the error message based on status code
-      error.value = 'Invalid email or password. Please try again.';
-    } else {
-      error.value = 'An unexpected error occurred. Please try again later.';
-    }
+          // You can customize the error message based on status code
+          error.value = "Invalid email or password. Please try again.";
+        } else {
+          error.value = "An unexpected error occurred. Please try again later.";
+        }
       } finally {
         isSubmitting.value = false;
       }
@@ -92,10 +100,9 @@ export default defineComponent({
       login,
       isSubmitting,
     };
-  }
+  },
 });
 </script>
-
 
 <style scoped>
 .login-page {
