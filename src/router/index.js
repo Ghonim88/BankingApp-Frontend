@@ -8,8 +8,9 @@ import Login from '../components/Login.vue';
 // import EmployeePanelPage from "../components/pages/EmployeePanelPage.vue";
 // import CustomerPanelPage from "@/components/pages/CustomerPanelPage.vue";
 // import AtmPanel from "@/components/atm/views/AtmPanel.vue";
- import EmployeeAllTransactions from "../components/pages/EmployeeAllTransactions.vue";
-// import { useAuthStore } from '@/stores/authStore';
+import EmployeeAllTransactions from "../components/pages/EmployeeAllTransactions.vue";
+import AllCustomers from '@/components/pages/AllCustomers.vue';
+ // import { useAuthStore } from '@/stores/authStore';
 // import SearchIbanByName from '@/components/pages/SearchIbanByName.vue';
 // import LoginRegister from "@/components/pages/LoginRegister.vue";
 
@@ -27,6 +28,7 @@ const router = createRouter({
     // { path: '/search-customer-iban', component: SearchIbanByName },
     // { path: '/transferfunds', component: TransferFunds },
      { path: '/transactions', component: EmployeeAllTransactions },
+     { path: '/customers', component: AllCustomers },
     // { path: '/atm', component: AtmPanel }, // Added ATM panel route
     // { path: '/:catchAll(.*)', redirect: '/404' } // Redirect unknown routes to 404
 
