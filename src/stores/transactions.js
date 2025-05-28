@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import axios from '@/axios-auth';
 
-export const useTransactionsStore = defineStore('transactions', {
+export const useTransactionsStore = defineStore('TransactionStore', {
   state: () => ({
     allTransactions: [],
     customerTransactions: [],

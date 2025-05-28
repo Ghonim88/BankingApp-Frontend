@@ -65,17 +65,17 @@ export default defineComponent({
         if (store.token) {
           //error.value = '';
 
-          await store.fetchUserData(); // ⬅️ Fetch user details from backend
+          // await store.fetchUserData(); // ⬅️ Fetch user details from backend
 
-          const role = store.user?.role;
+          // const role = store.user?.role;
 
-          if(role === 'EMPLOYEE') {
-            router.push("/transactions");
-          } else if (role === 'CUSTOMER') {
-            router.push("/home");
-          }
+          // if(role === 'EMPLOYEE') {
+          //   router.push("/transactions");
+          // } else if (role === 'CUSTOMER') {
+          //   router.push("/home");
+          // }
 
-          //router.push("/home"); // Redirect to home if already logged in
+          router.push("/home"); // Redirect to home if already logged in
           // Redirect to dashboard if login is successful
           //  this.$router.push('/dashboard');
         } else {
