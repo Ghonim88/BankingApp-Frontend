@@ -8,19 +8,19 @@
           <div class="py-3">Search by:</div>
         </div>
         <div class="col-auto">
-          <select class="form-select p-3 select-wide" aria-label="Default select example">
-            <option selected>Account status</option>
-            <option value="1">Verified</option>
-            <option value="2">Pending</option>
-            <option value="3">Closed</option>
-          </select>
+          <input
+            type="text"
+            class="form-control p-3 select-wide"
+            placeholder="Customer name"
+            v-model="searchQuery"
+          />
         </div>
         <div class="col-auto">
-          <select class="form-select p-3 select-wide" aria-label="Default select example">
-            <option selected>Account status</option>
-            <option value="1">Verified</option>
-            <option value="2">Pending</option>
-            <option value="3">Closed</option>
+          <select class="form-select p-3 select-wide" v-model="selectedStatus">
+            <option value="">All</option>
+            <option value="Verified">Verified</option>
+            <option value="Pending">Pending</option>
+            <option value="Closed">Closed</option>
           </select>
         </div>
       </div>
@@ -39,10 +39,10 @@
       </thead>
       <tbody>
         <tr
-          v-for="customer in customers"
+          v-for="customer in filteredCustomers"
           :key="customer.userId"
           @click="goToCustomer(customer.userId)"
-          style="cursor: pointer;"
+          style="cursor: pointer"
         >
           <td>{{ customer.userId }}</td>
           <td>{{ customer.firstName }} {{ customer.lastName }}</td>
@@ -57,17 +57,37 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useCustomerStore } from '@/stores/customers';
-import { storeToRefs } from 'pinia';
+import { onMounted, ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useCustomerStore } from "@/stores/customers";
+import { storeToRefs } from "pinia";
 
 const store = useCustomerStore();
 const { all: customers } = storeToRefs(store);
 const router = useRouter();
 
+const selectedStatus = ref("");
+const searchQuery = ref('');
+
 onMounted(() => {
   store.fetchAllCustomers();
+});
+
+
+const filteredCustomers = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+  const statusFilter = selectedStatus.value;
+
+  return customers.value.filter((customer) => {
+    const fullName = `${customer.firstName} ${customer.lastName}`.toLowerCase();
+
+    const matchesQuery =
+      fullName.includes(query) || status.includes(query);
+
+    const matchesStatus = !statusFilter || customer.accountStatus === statusFilter;
+
+    return matchesQuery && matchesStatus;
+  });
 });
 
 const goToCustomer = (id) => {

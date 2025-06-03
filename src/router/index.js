@@ -5,7 +5,7 @@ import Login from "../components/Login.vue";
 import EmployeeAllTransactions from "../components/pages/EmployeeAllTransactions.vue";
 import AllCustomers from "@/components/pages/AllCustomers.vue";
 import CustomerIndividualPage from "@/components/pages/IndividualCustomerPageEmployeeView.vue";
-
+import ApproveCustomerAccount from "@/components/pages/ApproveCustomerAccount.vue";
 // import PageNotFound from "@/components/pages/PageNotFound.vue";
 // import TransferFunds from '../components/pages/TransferFunds.vue';
 // import EmployeePanelPage from "../components/pages/EmployeePanelPage.vue";
@@ -27,7 +27,12 @@ const router = createRouter({
       component: AllCustomers,
       meta: { requiresAuth: true, role: "Employee" },
     }, //nothing role relating works, this one doesn t stop a customer from accessing the endpoint
-{ path: "/customers/:id", component: CustomerIndividualPage, props: true },
+    { path: "/customers/:id", component: CustomerIndividualPage, props: true },
+    {
+      path: "/customers/:id/approve",
+      component: ApproveCustomerAccount,
+      props: true,
+    },
     // { path: '/404', component: PageNotFound },
     // { path: '/login-register', component: LoginRegister },
     // { path: '/employeepanel', component: EmployeePanelPage, meta: { requiresAuth: true, role: 'Employee' } },

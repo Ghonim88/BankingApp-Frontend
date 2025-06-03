@@ -1,5 +1,9 @@
 <template>
   <div class="container mt-5">
+    <div v-if="successMessage" class="alert alert-success text-center">
+      {{ successMessage }}
+    </div>
+
     <a
       class="icon-link link-offset-2 link-offset-3-hover link-underline-dark link-underline-opacity-0 link-underline-opacity-75-hover text-black mb-5"
       href="/customers"
@@ -76,10 +80,7 @@
         aria-labelledby="details-tab"
         tabindex="0"
       >
-        this is the details tab pane
-
         <div class="row justify-content-around">
-          <!-- Left Column (Customer Info in Vertical Table) -->
           <div class="col-md-4">
             <table class="table table-bordered">
               <tbody>
@@ -111,13 +112,25 @@
             </table>
           </div>
 
-          <!-- Right Column (Text + Button) -->
           <div class="col-md-4 d-flex align-items-center">
-            <div class="row justify-content-end">
-              <p class="text-black text-end col-9">
-                This customer was not approved yet.
-              </p>
-              <button class="btn btn-primary w-50 mt-3 col-2">Take action</button>
+            <div class="row justify-content-end w-100">
+              <template v-if="accountStatus === 'Pending'">
+                <p class="text-black text-end col-9">
+                  This customer was not approved yet.
+                </p>
+                <button
+                  class="btn btn-primary w-50 mt-3 col-2"
+                  @click="navigateToCreateAccounts"
+                >
+                  Take action
+                </button>
+              </template>
+
+              <template v-else-if="accountStatus === 'Verified'">
+                <button class="btn btn-danger w-50 mt-3 col-2">
+                  Close Account
+                </button>
+              </template>
             </div>
           </div>
         </div>
@@ -154,17 +167,27 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { ref, onMounted, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useCustomerStore } from "@/stores/customers";
 
 const route = useRoute();
+const successMessage = ref("");
+const router = useRouter();
 const customerId = route.params.id;
 
 const store = useCustomerStore();
 
 onMounted(() => {
   store.fetchCustomerDetails(customerId);
+});
+onMounted(() => {
+  successMessage.value = route.query.successMessage || "";
+  if (successMessage.value) {
+    setTimeout(() => {
+      successMessage.value = "";
+    }, 3000);
+  }
 });
 
 const accountStatus = computed(
@@ -177,9 +200,18 @@ const lastName = computed(() => store.selectedCustomer?.lastName || "");
 const email = computed(() => store.selectedCustomer?.email || "");
 const bsn = computed(() => store.selectedCustomer?.bsn || "");
 const phoneNumber = computed(() => store.selectedCustomer?.phoneNumber || "");
+
+function navigateToCreateAccounts() {
+  router.push(`/customers/${route.params.id}/approve`);
+}
 </script>
 
 <style scoped>
+.nav-tabs .nav-link {
+  background-color: #edcb83;
+  color: black;
+}
+
 .nav-tabs .nav-link.active {
   background-color: #d7b060;
 }
@@ -191,15 +223,14 @@ const phoneNumber = computed(() => store.selectedCustomer?.phoneNumber || "");
 }
 
 .btn-primary {
-  background-color: #EDCB83; 
+  background-color: #edcb83;
   border: none;
   color: black;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: #D7B060; 
+  background-color: #d7b060;
   color: black;
 }
-
 </style>
