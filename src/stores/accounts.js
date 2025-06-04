@@ -21,6 +21,16 @@ export const useAccountStore = defineStore("AccountStore", {
     // },
     //TODO: add try catch blocks in customer store
 
+    async fetchCustomerAccounts(customerId) {
+      try {
+        const res = await axios.get(`/accounts/customer/${customerId}`);
+        this.customerAccounts = res.data;
+      } catch (err) {
+        this.error = err;
+        console.error("Failed to fetch customer accounts:", err);
+      }
+    },
+
     async fetchAllAccounts() {
       try {
         const res = await axios.get(`/accounts`);
@@ -36,11 +46,11 @@ export const useAccountStore = defineStore("AccountStore", {
         const sanitizedAccounts = accounts.map((acc) => ({
           customerId,
           accountType: acc.type,
-          dailyTransferLimit: acc.dailyLimit  || 0,
-          absoluteTransferLimit: acc.absoluteLimit  || 0,
+          dailyTransferLimit: acc.dailyLimit || 0,
+          absoluteTransferLimit: acc.absoluteLimit || 0,
         }));
 
-        await axios.post("/accounts", sanitizedAccounts); 
+        await axios.post("/accounts", sanitizedAccounts);
       } catch (err) {
         this.error = err;
         console.error("Account approval failed:", err);
