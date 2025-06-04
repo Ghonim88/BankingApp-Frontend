@@ -42,15 +42,19 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref } from "vue";
 import { userAuthStore } from "@/stores/user-auth";
+import { useCustomerStore } from "@/stores/customers"; // You forgot this import
 import { useRouter } from "vue-router";
+import { jwtDecode } from "jwt-decode";
+
 
 export default defineComponent({
   setup() {
-    const store = userAuthStore(); // Initialize the store
-    const router = useRouter(); // Use Vue Router for navigation
-    // Form data
+    const store = userAuthStore();
+    const customerStore = useCustomerStore();
+    const router = useRouter();
+
     const email = ref("");
     const password = ref("");
     const error = ref("");
@@ -58,36 +62,46 @@ export default defineComponent({
 
     const login = async () => {
       isSubmitting.value = true;
+      error.value = "";
 
       try {
-        await store.login(email.value, password.value);
+        // 1. Login, get token
+        const loginResponse = await store.login(email.value, password.value);
 
-        if (store.token) {
-          //error.value = '';
+        if (!store.token) {
+          error.value = "Login failed.";
+          return;
+        }
+        console.log("you are know inside the vue.");
+       
 
-          // await store.fetchUserData(); // ⬅️ Fetch user details from backend
+        const token = store.token; 
+        const decoded = jwtDecode(token);
+        const userRole = decoded.role;
+        const userId = decoded.userId; // Get userId from the token
+        console.log("User ID from token:", userId);
 
-          // const role = store.user?.role;
-
-          // if(role === 'EMPLOYEE') {
-          //   router.push("/transactions");
-          // } else if (role === 'CUSTOMER') {
-          //   router.push("/home");
-          // }
-
-          router.push("/home"); // Redirect to home if already logged in
-          // Redirect to dashboard if login is successful
-          //  this.$router.push('/dashboard');
+        
+        if (userRole === "CUSTOMER") {
+        const customerDetails = await customerStore.fetchCustomerDetails(userId);
+        const accountStatus = customerDetails.accountStatus;
+        
+        console.log("check Account status: ",accountStatus)
+          if (accountStatus == "Verified") {
+            router.push("/customerHome");
+          } else {
+            router.push("/home");
+          }
+        } else if (userRole === "EMPLOYEE") {
+          router.push("/employeeHome");
         } else {
-          error.value = "Login failed. Please check your credentials.";
+          error.value = "Unknown user role.";
         }
       } catch (err) {
-        if (err.response && err.response.status === 401) {
-          // You can customize the error message based on status code
-          error.value = "Invalid email or password. Please try again.";
-        } else {
-          error.value = "An unexpected error occurred. Please try again later.";
-        }
+        error.value = err.response?.status === 401
+          ? "Invalid email or password."
+          : "Unexpected error occurred.";
+        console.error(err);
       } finally {
         isSubmitting.value = false;
       }
@@ -103,6 +117,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style scoped>
 .login-page {

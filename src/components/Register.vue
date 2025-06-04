@@ -30,6 +30,9 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import { useCustomerRegistrationStore } from '@/stores/registration';
+import { userAuthStore } from "@/stores/user-auth";
+import { useRouter } from "vue-router";
+
 
 export default defineComponent({
   name: 'Registration',
@@ -60,7 +63,7 @@ export default defineComponent({
       bsn: 'Enter BSN',
       phoneNumber: '+31612345678',
     };
-
+    const router = useRouter();
     const registrationStore = useCustomerRegistrationStore();
 
     // Local state for error and success messages
@@ -132,7 +135,13 @@ export default defineComponent({
         // Check the result based on the store's response
         if (response) {
           successMessage.value = 'Registration successful!';
-          //reset form after successful registration
+          const loginResponse = await userAuthStore().login(form.value.email, form.value.password);
+        if (loginResponse.token) {
+              await userAuthStore().fetchUserData();
+              router.push('/home');
+            } else {
+              errorMessage.value = 'Login failed after registration. Please login manually.';
+            }
           form.value = {
             email: '',
             password: '',
