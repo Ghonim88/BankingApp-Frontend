@@ -24,6 +24,8 @@ export const useCustomerStore = defineStore("CustomerStore", {
       try {
         const res = await axios.get(`/customers/${customerId}`);
         this.selectedCustomer = res.data;
+        return res.data; // <-- ✅ return the fetched customer data
+
       } catch (err) {
         this.error = err;
         console.log("Failed to fetch the selected customer: ", err);

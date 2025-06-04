@@ -1,32 +1,29 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../components/Home.vue";
+import CustomerHomePage from "../components/CustomerHome.vue";
 import Register from "../components/Register.vue";
 import Login from "../components/Login.vue";
-import EmployeeAllTransactions from "../components/pages/EmployeeAllTransactions.vue";
-import AllCustomers from "@/components/pages/AllCustomers.vue";
-import CustomerIndividualPage from "@/components/pages/IndividualCustomerPageEmployeeView.vue";
-import ApproveCustomerAccount from "@/components/pages/ApproveCustomerAccount.vue";
-// import PageNotFound from "@/components/pages/PageNotFound.vue";
-// import TransferFunds from '../components/pages/TransferFunds.vue';
-// import EmployeePanelPage from "../components/pages/EmployeePanelPage.vue";
-// import CustomerPanelPage from "@/components/pages/CustomerPanelPage.vue";
-// import AtmPanel from "@/components/atm/views/AtmPanel.vue";
-// import { useAuthStore } from '@/stores/authStore';
-// import SearchIbanByName from '@/components/pages/SearchIbanByName.vue';
-// import LoginRegister from "@/components/pages/LoginRegister.vue";
+import EmployeeHomePage from "../components/employeePanel/HomeEmployee.vue";
+import EmployeeAllTransactions from "../components/employeePanel/EmployeeAllTransactions.vue";
+import AllCustomers from "@/components/employeePanel/AllCustomers.vue";
+import CustomerIndividualPage from "@/components/employeePanel/IndividualCustomerPageEmployeeView.vue";
+import ApproveCustomerAccount from "@/components/employeePanel/ApproveCustomerAccount.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: "/home", component: Home },
+    {path: "/customerHome", component: CustomerHomePage}, // Assuming this is the same as /home
     { path: "/register", component: Register },
     { path: "/login", component: Login },
+    { path: "/employeeHome", component: EmployeeHomePage, meta: { requiresAuth: true, role: "Employee" } },
     { path: "/transactions", component: EmployeeAllTransactions },
     {
       path: "/customers",
       component: AllCustomers,
       meta: { requiresAuth: true, role: "Employee" },
-    }, //nothing role relating works, this one doesn t stop a customer from accessing the endpoint
+    },
     { path: "/customers/:id", component: CustomerIndividualPage, props: true },
     {
       path: "/customers/:id/approve",
