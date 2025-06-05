@@ -65,22 +65,16 @@ export default defineComponent({
       error.value = "";
 
       try {
-        // 1. Login, get token
-        const loginResponse = await store.login(email.value, password.value);
 
         if (!store.token) {
           error.value = "Login failed.";
           return;
         }
-        console.log("you are know inside the vue.");
        
-
         const token = store.token; 
         const decoded = jwtDecode(token);
         const userRole = decoded.role;
         const userId = decoded.userId; // Get userId from the token
-        console.log("User ID from token:", userId);
-
         
         if (userRole === "CUSTOMER") {
         const customerDetails = await customerStore.fetchCustomerDetails(userId);

@@ -30,6 +30,8 @@ export const userAuthStore = defineStore('UserAuthStore', {
               const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
+              localStorage.setItem('role', decodedToken.role);
+              
               resolve(data); // Resolve with the response data (e.g., token)
             } else {
               reject(new Error('Invalid credentials'));

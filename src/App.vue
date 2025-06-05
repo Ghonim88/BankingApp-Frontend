@@ -5,7 +5,7 @@
     <!-- <NavigationCustomer v-else-if="userRole === 'CUSTOMER'" />
     <NavigationCustomer v-else-if="userRole === 'EMPLOYEE'" /> -->
     <router-view />
-    <FooterView />
+    <!-- <FooterView /> -->
   </div>
 </template>
 

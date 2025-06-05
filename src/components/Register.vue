@@ -10,7 +10,7 @@
           <div class="form-group" v-for="(label, key) in fields" :key="key">
             <label :for="key">{{ label }}</label>
             <input
-              :type="key === 'password' ? 'password' : 'text'"
+              :type="(key === 'password' || key === 'confirmPassword') ? 'password' : 'text'"
               :id="key"
               v-model="form[key]"
               required
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref,computed } from 'vue';
 import { useCustomerRegistrationStore } from '@/stores/registration';
 import { userAuthStore } from "@/stores/user-auth";
 import { useRouter } from "vue-router";
@@ -41,6 +41,7 @@ export default defineComponent({
     const form = ref({
       email: '',
       password: '',
+      confirmPassword: '', // 👈 new field
       firstName: '',
       lastName: '',
       bsn: '',
@@ -50,6 +51,7 @@ export default defineComponent({
     const fields = {
       email: 'Email',
       password: 'Password',
+      confirmPassword: 'Confirm Password',
       firstName: 'First Name',
       lastName: 'Last Name',
       bsn: 'BSN',
@@ -58,6 +60,7 @@ export default defineComponent({
     const placeholders= {
       email: 'customer@gmail.com',
       password: 'Enter password',
+      confirmPassword: 'Confirm your password',
       firstName: 'Enter first name',
       lastName: 'Enter last name',
       bsn: 'Enter BSN',
@@ -80,6 +83,14 @@ export default defineComponent({
     const isStrongPassword = (password) => {
       const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
       return pattern.test(password);
+    };
+    const passwordsMatch = computed(() => {
+      return form.value.password === form.value.confirmPassword;
+    });
+
+    const isValidEmail = (email) => {
+      const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return pattern.test(email);
     };            
 
     // Register customer function using the store
@@ -89,11 +100,20 @@ export default defineComponent({
         errorMessage.value = '';
         successMessage.value = '';
 
+        if (!isValidEmail(form.value.email)) {
+        errorMessage.value = 'Please enter a valid email address.';
+        return;
+      }
+
         if (!isStrongPassword(form.value.password)) {
           errorMessage.value =
             'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.';
           return;
         }
+         if (!passwordsMatch.value) {
+        errorMessage.value = 'Passwords do not match.';
+        return;
+      }
 
         //Phone number validation: Must start with +316 and be 12 digits long
          if (!form.value.phoneNumber.startsWith('+316')) {
@@ -145,6 +165,7 @@ export default defineComponent({
           form.value = {
             email: '',
             password: '',
+            confirmPassword: '',
             firstName: '',
             lastName: '',
             bsn: '',
@@ -170,6 +191,7 @@ export default defineComponent({
       registerCustomer,
       fields,
       placeholders,
+      passwordsMatch,
     };
   },
 });
@@ -275,5 +297,33 @@ input:focus {
   margin-top: 15px;
   text-align: center;
 }
+.match {
+  border: 2px solid green;
+}
+
+.mismatch {
+  border: 2px solid red;
+}
+
+.validation-text {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 4px;
+}
+
+input.match {
+  border: 2px solid green;
+}
+
+input.mismatch {
+  border: 2px solid red;
+}
+
+.validation-text {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
 
 </style>
