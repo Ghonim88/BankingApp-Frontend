@@ -65,13 +65,15 @@ export default defineComponent({
       error.value = "";
 
       try {
+        const response = await store.login(email.value, password.value);
 
-        if (!store.token) {
+        const token = store.token; 
+        if (!token) {
           error.value = "Login failed.";
+          console.log("token ",token);
           return;
         }
        
-        const token = store.token; 
         const decoded = jwtDecode(token);
         const userRole = decoded.role;
         const userId = decoded.userId; // Get userId from the token
