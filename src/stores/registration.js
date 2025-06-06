@@ -3,12 +3,7 @@ import axios from '../axios-auth';
 
 export const useCustomerRegistrationStore = defineStore('CustomerRegistrationStore', {
   state: () => ({
-    //TODO: try to use a user object here instead of multiple variables
-    email: null,
-    firstName: null,
-    lastName: null,
-    bsn: null,
-    phoneNumber: null,
+    userRegistration:null,
   }),
 
   actions: {
@@ -23,15 +18,9 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
           })
           .then((response) => {
             console.log('Registration Response:', response);
-            const data = response.data;
+            const data= response.data;
             if (data) {
-              this.email = data.email;
-              this.firstName = data.firstName;
-              this.lastName = data.lastName;
-              this.bsn = data.bsn;
-              this.phoneNumber = data.phoneNumber;
-
-           
+              this.userRegistration = data; // Store the registration data in the state
               resolve(data); // Resolve the promise with the customer data
             } else {
               reject(new Error('Registration failed, no data returned'));

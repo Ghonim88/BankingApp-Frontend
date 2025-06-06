@@ -8,63 +8,72 @@ import EmployeeAllTransactions from "../components/employeePanel/EmployeeAllTran
 import AllCustomers from "@/components/employeePanel/AllCustomers.vue";
 import CustomerIndividualPage from "@/components/employeePanel/IndividualCustomerPageEmployeeView.vue";
 import ApproveCustomerAccount from "@/components/employeePanel/ApproveCustomerAccount.vue";
-
+import Forbidden from "../components/Forbidden.vue";
+import NotFound from "../components/NotFound.vue";
+import { userAuthStore } from "../stores/user-auth.js"; // adjust path as needed
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: "/home", component: Home },
-    {path: "/customerHome", component: CustomerHomePage}, // Assuming this is the same as /home
-    { path: "/register", component: Register },
-    { path: "/login", component: Login },
-    { path: "/employeeHome", component: EmployeeHomePage, meta: { requiresAuth: true, role: "Employee" } },
-    { path: "/transactions", component: EmployeeAllTransactions },
-    {
-      path: "/customers",
-      component: AllCustomers,
-      meta: { requiresAuth: true, role: "Employee" },
-    },
+    // Default routes
+  { path: "/",redirect: "/login" },
+
+  // Customer routes
+  { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/customerHome", component: CustomerHomePage, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/register", component: Register },
+  { path: "/login", component: Login },
+
+
+    // Employee routes
+  { path: "/employeeHome", component: EmployeeHomePage, meta: { requiresAuth: true, role: "Employee" } },
+  { path: "/transactions", component: EmployeeAllTransactions, meta: { requiresAuth: true, role: "Employee" } },
+  { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
+  // { path: "/accounts", component: , meta: { requiresAuth: true, role: "Employee" } }, TODO: add all accounts page
+
+
+
+    // Error handling routes
+  { path: "/forbidden", component: Forbidden },
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
+
+  
     { path: "/customers/:id", component: CustomerIndividualPage, props: true },
     {
       path: "/customers/:id/approve",
       component: ApproveCustomerAccount,
       props: true,
     },
-    {
-      path: "/accounts",
-      component: () => import("@/components/employeePanel/Accounts.vue"),
-      meta: { requiresAuth: true, role: "Employee" }
-    },
-    {
-      path: "/accounts/:id",
-      component: () => import("@/components/employeePanel/AccountDetails.vue"),
-      props: true,
-      meta: { requiresAuth: true, role: "Employee" }
-    },
-
-
-    // { path: '/404', component: PageNotFound },
-    // { path: '/login-register', component: LoginRegister },
-    // { path: '/employeepanel', component: EmployeePanelPage, meta: { requiresAuth: true, role: 'Employee' } },
-    // { path: '/customerpanel/:id', component: CustomerPanelPage, props: true, meta: { requiresAuth: true, role: 'Customer' } },
-    // { path: '/search-customer-iban', component: SearchIbanByName },
-    // { path: '/transferfunds', component: TransferFunds },
-
-    // { path: '/atm', component: AtmPanel }, // Added ATM panel route
-    // { path: '/:catchAll(.*)', redirect: '/404' } // Redirect unknown routes to 404
+    
   ],
 });
 
-// router.beforeEach((to, from, next) => {
-//   const store = useAuthStore();
-//   const isLoggedIn = store.isLoggedIn;
-//   const userRole = store.role || localStorage.getItem('role');
+// Navigation guard to check authentication and authorization
+router.beforeEach(async (to, from, next) => {
+  const authStore = userAuthStore();
 
-//   if (isLoggedIn && userRole === 'ATM' && to.path !== '/atm') {
-//     next('/atm'); // Redirect to /atm if logged in as ATM and trying to access other routes
-//   } else {
-//     next();
-//   }
-// });
+  // Route requires authentication
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+     console.warn("No token found, redirecting to /login");
+      return next("/login");
+    }
+
+    const userRole = localStorage.getItem('role');
+    const requiredRole = to.meta.role;
+
+    // Check if route has a specific role requirement
+    if (requiredRole && userRole.toLowerCase() !== requiredRole.toLowerCase()) {
+      return next("/forbidden"); // or a 403/NotAllowed page
+    }
+
+    return next();
+  }
+
+  next();
+
+});
 
 export default router;
