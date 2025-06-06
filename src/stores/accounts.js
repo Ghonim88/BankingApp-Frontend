@@ -6,6 +6,7 @@ export const useAccountStore = defineStore("AccountStore", {
     customerAccounts: [],
     allAccounts: [],
     accountsToCreate: [],
+    selectedAccount: null,
     error: null,
   }),
 
@@ -47,5 +48,28 @@ export const useAccountStore = defineStore("AccountStore", {
         throw err;
       }
     },
+
+    async fetchAccountById(id) {
+      try {
+        const res = await axios.get(`/accounts/${id}`);
+        this.selectedAccount = res.data;
+      } catch (err) {
+        this.error = err;
+        console.error("Failed to fetch account by ID:", err);
+        throw err;
+      }
+    },
+
+    async updateAccount(id, updatedFields) {
+      try {
+        await axios.put(`/accounts/${id}`, updatedFields);
+        Object.assign(this.selectedAccount, updatedFields); // sync local state
+      } catch (err) {
+        this.error = err;
+        console.error("Failed to update account:", err);
+        throw err;
+      }
+    },
+
   },
 });
