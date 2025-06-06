@@ -30,6 +30,19 @@ const router = createRouter({
       component: ApproveCustomerAccount,
       props: true,
     },
+    {
+      path: "/accounts",
+      component: () => import("@/components/employeePanel/Accounts.vue"),
+      meta: { requiresAuth: true, role: "Employee" }
+    },
+    {
+      path: "/accounts/:id",
+      component: () => import("@/components/employeePanel/AccountDetails.vue"),
+      props: true,
+      meta: { requiresAuth: true, role: "Employee" }
+    },
+
+
     // { path: '/404', component: PageNotFound },
     // { path: '/login-register', component: LoginRegister },
     // { path: '/employeepanel', component: EmployeePanelPage, meta: { requiresAuth: true, role: 'Employee' } },
