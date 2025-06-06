@@ -10,7 +10,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
   }),
 
   getters: {
-    getEmail: (state) => state.email,
+    getEmail: (state) => state.user?.email || '',
     getToken: (state) => state.token,
   },
 
@@ -27,6 +27,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
 
             if (data.token) {
               localStorage.setItem('token', data.token);
+              console.log('Login successful, token:', data.token);
               const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
