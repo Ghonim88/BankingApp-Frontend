@@ -5,12 +5,12 @@ import { jwtDecode } from 'jwt-decode';
 export const userAuthStore = defineStore('UserAuthStore', {
   state: () => ({
     token: localStorage.getItem('token') || '',  // Set token if already in localStorage
-     isLoggedIn: !!localStorage.getItem('token'), // Set to true if a token exists
-      user : null
+    isLoggedIn: !!localStorage.getItem('token'), // Set to true if a token exists
+    user : null,
   }),
 
   getters: {
-    getEmail: (state) => state.email,
+    getEmail: (state) => state.user?.email || '',
     getToken: (state) => state.token,
   },
 
@@ -27,9 +27,12 @@ export const userAuthStore = defineStore('UserAuthStore', {
 
             if (data.token) {
               localStorage.setItem('token', data.token);
-              console.log('Token:', data.token);
+              console.log('Login successful, token:', data.token);
+              const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
+              localStorage.setItem('role', decodedToken.role);
+              
               resolve(data); // Resolve with the response data (e.g., token)
             } else {
               reject(new Error('Invalid credentials'));
@@ -40,6 +43,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
           });
       });
     },
+    
     async fetchUserData() {
       try {
         // Decode the token to get user info
@@ -48,9 +52,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
           console.error('No token found, user not logged in');
           return;
         }
-
-        const decodedToken = jwtDecode(token);
-        const role = decodedToken.role; 
+       
         const authorizationHeader = `Bearer ${token}`;
 
         console.log('Authorization Header:', authorizationHeader);
@@ -62,12 +64,10 @@ export const userAuthStore = defineStore('UserAuthStore', {
               'Authorization':  authorizationHeader,
             },
           });
-        
         // Now store that detailed info
         this.user = response.data; 
-     
-        console.log('User data fetched successfully:', this.user);
-  
+        console.log('User data:', this.user);
+      
       } catch (err) {
         console.error('Failed to fetch user data:', err);
       }
@@ -79,9 +79,9 @@ export const userAuthStore = defineStore('UserAuthStore', {
 
     logout() {
     
-     localStorage.removeItem('token');
+    localStorage.removeItem('token');
      this.isLoggedIn = false;
-    this.user = null; // Reset the user object
+     this.user = null; // Reset the user object
 
       this.$reset();
      window.location.href = '/login';
@@ -90,5 +90,4 @@ export const userAuthStore = defineStore('UserAuthStore', {
   }
 });
 
-// employeeDTO.setEmail("john@gmail.com");
-//employeeDTO.setPassword("password");
+
