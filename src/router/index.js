@@ -11,6 +11,9 @@ import ApproveCustomerAccount from "@/components/employeePanel/ApproveCustomerAc
 import Forbidden from "../components/Forbidden.vue";
 import NotFound from "../components/NotFound.vue";
 import { userAuthStore } from "../stores/user-auth.js"; // adjust path as needed
+import AllAccounts from "@/components/employeePanel/Accounts.vue";
+import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,8 +32,8 @@ const router = createRouter({
   { path: "/employeeHome", component: EmployeeHomePage, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/transactions", component: EmployeeAllTransactions, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
-  // { path: "/accounts", component: , meta: { requiresAuth: true, role: "Employee" } }, TODO: add all accounts page
-
+    { path: "/accounts", component: AllAccounts, meta: { requiresAuth: true, role: "Employee" } },
+    { path: "/accounts/:id", component: AccountDetails, meta: { requiresAuth: true, role: "Employee" }, props: true },
 
 
     // Error handling routes
