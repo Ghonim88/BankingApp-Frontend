@@ -1,4 +1,3 @@
-// stores/transactionsStore.js
 import { defineStore } from 'pinia';
 import axios from '@/axios-auth';
 
@@ -11,8 +10,13 @@ export const useTransactionsStore = defineStore('TransactionStore', {
 
   actions: {
     async fetchAllTransactions() {
-      const response = await axios.get('/transactions');
-      this.allTransactions = response.data;
+      try {
+        const res = await axios.get(`/api/transactions`);
+        this.allTransactions = res.data;
+      } catch (err) {
+        this.error = err;
+        console.log("Failed to fetch all transactions: ", err);
+      }
     },
 
     async fetchCustomerTransactions(customerId) {
