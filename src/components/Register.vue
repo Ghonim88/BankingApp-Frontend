@@ -41,7 +41,7 @@ export default defineComponent({
     const form = ref({
       email: '',
       password: '',
-      confirmPassword: '', // 👈 new field
+      confirmPassword: '',
       firstName: '',
       lastName: '',
       bsn: '',
