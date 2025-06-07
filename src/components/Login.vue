@@ -82,7 +82,6 @@ export default defineComponent({
         const customerDetails = await customerStore.fetchCustomerDetails(userId);
         const accountStatus = customerDetails.accountStatus;
         
-        console.log("check Account status: ",accountStatus)
           if (accountStatus == "Verified") {
             router.push("/customerHome");
           } else {
