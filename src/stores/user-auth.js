@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from '../axios-auth'; 
 import { jwtDecode } from 'jwt-decode';
+import router from '@/router';
 
 export const userAuthStore = defineStore('UserAuthStore', {
   state: () => ({
@@ -80,11 +81,10 @@ export const userAuthStore = defineStore('UserAuthStore', {
     logout() {
     
     localStorage.removeItem('token');
-     this.isLoggedIn = false;
-     this.user = null; // Reset the user object
+    localStorage.removeItem('role');
+    this.$reset();
+    router.push('/login');
 
-      this.$reset();
-     window.location.href = '/login';
 
     },  
   }
