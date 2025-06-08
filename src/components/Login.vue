@@ -44,7 +44,7 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { userAuthStore } from "@/stores/user-auth";
-import { useCustomerStore } from "@/stores/customers"; // You forgot this import
+import { useCustomerStore } from "@/stores/customers";
 import { useRouter } from "vue-router";
 import { jwtDecode } from "jwt-decode";
 
@@ -94,7 +94,7 @@ export default defineComponent({
         }
       } catch (err) {
         error.value = err.response?.status === 401
-          ? "Invalid email or password."
+          ? "Invalid email or password." // Ternary Operator
           : "Unexpected error occurred.";
         console.error(err);
       } finally {

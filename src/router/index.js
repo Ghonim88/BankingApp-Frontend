@@ -10,7 +10,6 @@ import CustomerIndividualPage from "@/components/employeePanel/IndividualCustome
 import ApproveCustomerAccount from "@/components/employeePanel/ApproveCustomerAccount.vue";
 import Forbidden from "../components/Forbidden.vue";
 import NotFound from "../components/NotFound.vue";
-import { userAuthStore } from "../stores/user-auth.js"; // adjust path as needed
 import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
 import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
@@ -18,8 +17,7 @@ import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFu
 
 
 const router = createRouter({
-  //history: createWebHistory(import.meta.env.BASE_URL),
-  history: createWebHistory('/BankingApp-Frontend/'),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // Default routes
   { path: "/",redirect: "/login" },
@@ -56,7 +54,6 @@ const router = createRouter({
 
 // Navigation guard to check authentication and authorization
 router.beforeEach(async (to, from, next) => {
-  const authStore = userAuthStore();
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("role");
 
@@ -67,7 +64,7 @@ router.beforeEach(async (to, from, next) => {
     } else if (userRole.toLowerCase() === "employee") {
       return next("/employeeHome");
     } else {
-      return next("/home"); // fallback
+      return next("/home"); 
     }
   }
 
