@@ -15,7 +15,7 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item" v-if="isLoggedIn && isApproved">
+          <li class="nav-item" v-if="isLoggedIn && isApproved && userRole === 'CUSTOMER'">
             <router-link to="/customerHome" class="nav-link">Customer Home</router-link>
           </li>
           <li class="nav-item" v-else-if="isLoggedIn && userRole === 'EMPLOYEE'">
@@ -55,7 +55,6 @@
 
 <script>
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/user-auth';
 import { useCustomerStore } from '@/stores/customers';
 import { jwtDecode } from 'jwt-decode';
@@ -63,15 +62,15 @@ import { jwtDecode } from 'jwt-decode';
 export default defineComponent({
   name: 'CleanNavbar',
   setup() {
-    const router = useRouter();
     const userAuth = userAuthStore();
     const customerStore = useCustomerStore();
 
     const fullName = ref('');
     const isApproved = ref(false);
-    const userRole = ref(null);
 
     const isLoggedIn = computed(() => userAuth.isLoggedIn);
+    const userRole = computed(() => userAuth.role);
+
 
     const fetchUserInfo = async () => {
       const token = userAuth.token;
@@ -79,7 +78,6 @@ export default defineComponent({
 
       try {
         const decoded = jwtDecode(token);
-        userRole.value = decoded.role;
 
         if (userRole.value === 'CUSTOMER') {
           await customerStore.fetchCustomerDetails(decoded.userId);
@@ -103,7 +101,6 @@ export default defineComponent({
 
     const handleLogout = () => {
       userAuth.logout();
-      router.push('/');
     };
 
     onMounted(() => {

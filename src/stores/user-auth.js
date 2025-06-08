@@ -5,14 +5,16 @@ import router from '@/router';
 
 export const userAuthStore = defineStore('UserAuthStore', {
   state: () => ({
-    token: localStorage.getItem('token') || '',  // Set token if already in localStorage
-    isLoggedIn: !!localStorage.getItem('token'), // Set to true if a token exists
+    token: localStorage.getItem('token') || '',  
+    isLoggedIn: !!localStorage.getItem('token'), 
+    role: localStorage.getItem('role') || '', 
     user : null,
   }),
 
   getters: {
     getEmail: (state) => state.user?.email || '',
     getToken: (state) => state.token,
+    getRole: (state) => state.role,
   },
 
   actions: {
@@ -32,7 +34,8 @@ export const userAuthStore = defineStore('UserAuthStore', {
               const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
-              localStorage.setItem('role', decodedToken.role);
+              this.role = decodedToken.role; // Assuming the role is in the token
+              localStorage.setItem('role', this.role);
               
               resolve(data); // Resolve with the response data (e.g., token)
             } else {
@@ -56,8 +59,6 @@ export const userAuthStore = defineStore('UserAuthStore', {
        
         const authorizationHeader = `Bearer ${token}`;
 
-        console.log('Authorization Header:', authorizationHeader);
-
         try {
           const response = await axios.get('/auth/me', {
             headers: {
@@ -67,7 +68,6 @@ export const userAuthStore = defineStore('UserAuthStore', {
           });
         // Now store that detailed info
         this.user = response.data; 
-        console.log('User data:', this.user);
       
       } catch (err) {
         console.error('Failed to fetch user data:', err);
@@ -82,7 +82,9 @@ export const userAuthStore = defineStore('UserAuthStore', {
     
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    this.$reset();
+    this.isLoggedIn = false;
+    this.user = null; 
+    this.role = null;
     router.push('/login');
 
 
