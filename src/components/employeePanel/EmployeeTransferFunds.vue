@@ -108,7 +108,7 @@ const submitTransfer = async () => {
   const payload = {
     fromIban: form.value.senderIban,
     toIban: form.value.receiverIban,
-    amount: form.value.amount,
+    amount: form.value.amount
   };
 
   try {
