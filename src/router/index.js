@@ -12,8 +12,8 @@ import Forbidden from "../components/Forbidden.vue";
 import NotFound from "../components/NotFound.vue";
 import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
-import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
-import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
+import Welcome from "@/components/Welcome.vue";
+import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue";
 import CustomerAccounts from "@/components/customerPages/CustomerAccounts.vue";
 import CustomerTransactions from "@/components/customerPages/CustomerTransactionsForAccount.vue";
 import CustomerTransfer from "@/components/customerPages/CustomerTransfer.vue";
