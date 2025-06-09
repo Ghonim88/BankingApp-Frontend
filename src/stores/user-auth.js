@@ -82,6 +82,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
     
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem("lockedOnHome");
     this.isLoggedIn = false;
     this.user = null; 
     this.role = null;
@@ -91,5 +92,4 @@ export const userAuthStore = defineStore('UserAuthStore', {
     },  
   }
 });
-
 

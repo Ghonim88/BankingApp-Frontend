@@ -21,6 +21,7 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
             const data= response.data;
             if (data) {
               this.userRegistration = data; // Store the registration data in the state
+
               resolve(data); // Resolve the promise with the customer data
             } else {
               reject(new Error('Registration failed, no data returned'));
