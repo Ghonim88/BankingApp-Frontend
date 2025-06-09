@@ -26,6 +26,10 @@
       </div>
     </div> -->
 
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <router-link to="/transactions/new" class="btn btn-warning">New Transaction</router-link>
+    </div>
+
     <table class="table table-hover table-striped mt-5">
       <thead>
         <tr>

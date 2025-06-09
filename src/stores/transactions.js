@@ -20,7 +20,7 @@ export const useTransactionsStore = defineStore('TransactionStore', {
     },
 
     async fetchCustomerTransactions(customerId) {
-      const response = await axios.get(`/customers/${customerId}/transactions`);
+      const response = await axios.get(`/api/transactions/customer/${customerId}`);
       this.customerTransactions = response.data;
     },
 

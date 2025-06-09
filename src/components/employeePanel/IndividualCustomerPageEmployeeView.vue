@@ -136,23 +136,61 @@
         </div>
       </div>
       <div
-        class="tab-pane fade"
-        id="accounts-tab-pane"
-        role="tabpanel"
-        aria-labelledby="accounts-tab"
-        tabindex="0"
+          class="tab-pane fade"
+          id="accounts-tab-pane"
+          role="tabpanel"
+          aria-labelledby="accounts-tab"
+          tabindex="0"
       >
-        accounts
+        <div v-if="accountStore.customerAccounts.length">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>IBAN</th>
+              <th>Type</th>
+              <th>Balance (€)</th>
+              <th>Daily Limit</th>
+              <th>Absolute Limit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="acc in accountStore.customerAccounts" :key="acc.accountId">
+              <td>{{ acc.iban }}</td>
+              <td>{{ acc.accountType }}</td>
+              <td>{{ acc.balance }}</td>
+              <td>{{ acc.dailyTransferLimit }}</td>
+              <td>{{ acc.absoluteTransferLimit }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-else class="text-muted">No accounts found.</div>
       </div>
-      <div
-        class="tab-pane fade"
-        id="transactions-tab-pane"
-        role="tabpanel"
-        aria-labelledby="transactions-tab"
-        tabindex="0"
-      >
-        transactions
+
+      <div class="tab-pane fade" id="transactions-tab-pane" role="tabpanel" aria-labelledby="transactions-tab" tabindex="0">
+        <div v-if="transactionStore.customerTransactions.length">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>From IBAN</th>
+              <th>To IBAN</th>
+              <th>Amount (€)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="tx in transactionStore.customerTransactions" :key="tx.transactionId">
+              <td>{{ new Date(tx.createdAt).toLocaleString() }}</td>
+              <td>{{ tx.senderIban }}</td>
+              <td>{{ tx.receiverIban }}</td>
+              <td>{{ tx.transactionAmount }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-else class="text-muted">No transactions found.</div>
       </div>
+
       <div
         class="tab-pane fade"
         id="disabled-tab-pane"
@@ -170,16 +208,25 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCustomerStore } from "@/stores/customers";
+import { useTransactionsStore } from "@/stores/transactions";
+import { useAccountStore } from "@/stores/accounts";
+
 
 const route = useRoute();
 const successMessage = ref("");
 const router = useRouter();
 const customerId = route.params.id;
 
+
+const transactionStore = useTransactionsStore();
 const store = useCustomerStore();
+const accountStore = useAccountStore();
 
 onMounted(() => {
   store.fetchCustomerDetails(customerId);
+  transactionStore.fetchCustomerTransactions(customerId);
+  accountStore.fetchAccountsByCustomer(customerId);
+
 });
 onMounted(() => {
   successMessage.value = route.query.successMessage || "";

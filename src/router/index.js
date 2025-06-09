@@ -13,6 +13,8 @@ import NotFound from "../components/NotFound.vue";
 import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
 import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
+import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
+
 
 
 
@@ -37,7 +39,7 @@ const router = createRouter({
   { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/accounts", component: AllAccounts, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/accounts/:id", component: AccountDetails, meta: { requiresAuth: true, role: "Employee" }, props: true },
-
+    { path: "/transactions/new", component: EmployeeTransferFunds, meta: { requiresAuth: true, role: "Employee" } },
 
     // Error handling routes
   { path: "/forbidden", component: Forbidden },
