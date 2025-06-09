@@ -77,7 +77,6 @@ onMounted(async () => {
 });
 onMounted(() => {
   localStorage.setItem("lockedOnHome", "true");
-  console.log("User locked on home page");
 });
 
 // Access user properties through the `user` object

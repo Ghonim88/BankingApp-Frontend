@@ -52,17 +52,7 @@
 </template>
 
 <script>
-export default {
-  name: 'BankingWelcomePage',
-  data() {
-    return {
-      // Component data can be added here if needed
-    }
-  },
-  methods: {
-    // Component methods can be added here
-  }
-}
+
 </script>
 
 <style scoped>

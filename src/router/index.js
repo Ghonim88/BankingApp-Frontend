@@ -12,8 +12,8 @@ import Forbidden from "../components/Forbidden.vue";
 import NotFound from "../components/NotFound.vue";
 import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
-import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
-import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
+import Welcome from "@/components/Welcome.vue"; 
+import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; 
 
 
 
@@ -24,7 +24,7 @@ const router = createRouter({
   routes: [
     // Default routes
   { path: "/",redirect: "/login" },
-  {path: "/welcome", component: Welcome}, // Welcome page route
+  {path: "/welcome", component: Welcome},
 
   // Customer routes
   { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
@@ -71,9 +71,10 @@ const lockedOnHome = localStorage.getItem("lockedOnHome");
     return next("/home");
   }
   
+const normalizedPath = to.path.toLowerCase();
 
   // 🚫 Block logged-in users from accessing /register or /login
-  if ((to.path === "/register" || to.path === "/login") && token) {
+  if ((normalizedPath == "/register" || normalizedPath == "/login") && token) {
     if (userRole.toLowerCase() === "customer") {
       return next("/customerHome");
     } else if (userRole.toLowerCase() === "employee") {
