@@ -14,7 +14,7 @@ import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
 import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
 import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
-
+import CustomerAccounts from "@/components/customerPages/customerAccounts.vue";
 
 
 
@@ -29,6 +29,7 @@ const router = createRouter({
   // Customer routes
   { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/customerHome", component: CustomerHomePage, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/bank/accounts", component: CustomerAccounts, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/register", component: Register },
   { path: "/login", component: Login },
 

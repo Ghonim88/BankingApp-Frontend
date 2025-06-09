@@ -11,17 +11,7 @@ export const useAccountStore = defineStore("AccountStore", {
   }),
 
   actions: {
-    // async fetchAccountsByCustomer(customerId) {
-    //   try {
-    //     const res = await axios.get(`/customers/${customerId}/accounts`);
-    //     this.customerAccounts = res.data;
-    //   } catch (err) {
-    //     this.error = err;
-    //     console.error('Failed to fetch customer accounts:', err);
-    //   }
-    // },
-    //TODO: add try catch blocks in customer store
-
+    
     async fetchAllAccounts() {
       try {
         const res = await axios.get(`/accounts`);
