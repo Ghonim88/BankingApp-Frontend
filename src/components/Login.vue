@@ -76,13 +76,14 @@ export default defineComponent({
        
         const decoded = jwtDecode(token);
         const userRole = decoded.role;
-        const userId = decoded.userId; // Get userId from the token
+        const userId = decoded.userId; 
         
         if (userRole === "CUSTOMER") {
         const customerDetails = await customerStore.fetchCustomerDetails(userId);
         const accountStatus = customerDetails.accountStatus;
         
-          if (accountStatus == "Verified") {
+          if (accountStatus === "Verified") {
+            console.log("Account status: ", accountStatus);
             router.push("/customerHome");
           } else {
             router.push("/home");
@@ -90,7 +91,7 @@ export default defineComponent({
         } else if (userRole === "EMPLOYEE") {
           router.push("/employeeHome");
         } else {
-          error.value = "Unknown user role.";
+          error.value = "Access denied. Please contact support.";
         }
       } catch (err) {
         error.value = err.response?.status === 401

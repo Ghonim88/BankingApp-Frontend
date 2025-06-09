@@ -34,7 +34,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
               const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
-              this.role = decodedToken.role; // Assuming the role is in the token
+              this.role = decodedToken.role; 
               localStorage.setItem('role', this.role);
               
               resolve(data); // Resolve with the response data (e.g., token)

@@ -18,6 +18,7 @@ import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFu
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  //history: createWebHistory('/BankingApp-Frontend/'),
   routes: [
     // Default routes
   { path: "/",redirect: "/login" },
@@ -42,10 +43,13 @@ const router = createRouter({
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 
   
-    { path: "/customers/:id", component: CustomerIndividualPage, props: true },
+    { path: "/customers/:id", component: CustomerIndividualPage,
+      meta: { requiresAuth: true, role: "Employee" },
+       props: true },
     {
       path: "/customers/:id/approve",
       component: ApproveCustomerAccount,
+      meta: { requiresAuth: true, role: "Employee" },
       props: true,
     },
     
