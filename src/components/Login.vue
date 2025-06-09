@@ -70,7 +70,6 @@ export default defineComponent({
         const token = store.token; 
         if (!token) {
           error.value = "Login failed.";
-          console.log("token ",token);
           return;
         }
        
@@ -83,7 +82,6 @@ export default defineComponent({
         const accountStatus = customerDetails.accountStatus;
         
           if (accountStatus === "Verified") {
-            console.log("Account status: ", accountStatus);
             router.push("/customerHome");
           } else {
             router.push("/home");

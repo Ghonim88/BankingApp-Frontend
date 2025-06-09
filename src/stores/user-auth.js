@@ -30,7 +30,6 @@ export const userAuthStore = defineStore('UserAuthStore', {
 
             if (data.token) {
               localStorage.setItem('token', data.token);
-              console.log('Login successful, token:', data.token);
               const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
@@ -79,10 +78,8 @@ export const userAuthStore = defineStore('UserAuthStore', {
     },
 
     logout() {
-    
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem("lockedOnHome");
+   
+    localStorage.clear(); // Clear all localStorage items
     this.isLoggedIn = false;
     this.user = null; 
     this.role = null;

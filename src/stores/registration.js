@@ -17,7 +17,6 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
             },
           })
           .then((response) => {
-            console.log('Registration Response:', response);
             const data= response.data;
             if (data) {
               this.userRegistration = data; // Store the registration data in the state
