@@ -71,5 +71,15 @@ export const useAccountStore = defineStore("AccountStore", {
       }
     },
 
+    async fetchAccountsByCustomer(customerId) {
+      try {
+        const res = await axios.get(`/accounts/customer/${customerId}`);
+        this.customerAccounts = res.data;
+      } catch (err) {
+        this.error = err;
+        console.error("Failed to fetch customer accounts:", err);
+      }
+    }
+
   },
 });
