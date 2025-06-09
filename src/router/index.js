@@ -24,7 +24,7 @@ const router = createRouter({
   routes: [
     // Default routes
   { path: "/",redirect: "/login" },
-  {path: "/welcome", component: Welcome}, // Welcome page route
+  {path: "/welcome", component: Welcome}, 
 
   // Customer routes
   { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
@@ -74,9 +74,10 @@ const lockedOnHome = localStorage.getItem("lockedOnHome");
     return next("/home");
   }
   
+  const normalizedPath = to.path.toLowerCase();
 
   // 🚫 Block logged-in users from accessing /register or /login
-  if ((to.path === "/register" || to.path === "/login") && token) {
+  if ((normalizedPath === "/register" || normalizedPath === "/login") && token) {
     if (userRole.toLowerCase() === "customer") {
       return next("/customerHome");
     } else if (userRole.toLowerCase() === "employee") {
