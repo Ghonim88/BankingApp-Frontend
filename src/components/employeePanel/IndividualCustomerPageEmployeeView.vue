@@ -6,7 +6,7 @@
 
     <a
       class="icon-link link-offset-2 link-offset-3-hover link-underline-dark link-underline-opacity-0 link-underline-opacity-75-hover text-black mb-5"
-      href="/customers"
+      href="/BankingApp-Frontend/customers"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
