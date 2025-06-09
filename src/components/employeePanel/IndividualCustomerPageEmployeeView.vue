@@ -181,8 +181,8 @@
             <tbody>
             <tr v-for="tx in transactionStore.customerTransactions" :key="tx.transactionId">
               <td>{{ new Date(tx.createdAt).toLocaleString() }}</td>
-              <td>{{ tx.senderIban }}</td>
-              <td>{{ tx.receiverIban }}</td>
+              <td>{{ tx.fromAccount.iban }}</td>
+              <td>{{ tx.toAccount.iban }}</td>
               <td>{{ tx.transactionAmount }}</td>
             </tr>
             </tbody>
