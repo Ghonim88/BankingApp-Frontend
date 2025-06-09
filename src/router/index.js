@@ -14,9 +14,9 @@ import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
 import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
 import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
-import CustomerAccounts from "@/components/customerPages/customerAccounts.vue";
-
-
+import CustomerAccounts from "@/components/customerPages/CustomerAccounts.vue";
+import CustomerTransactions from "@/components/customerPages/CustomerTransactionsForAccount.vue";
+import CustomerTransfer from "@/components/customerPages/CustomerTransfer.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +30,8 @@ const router = createRouter({
   { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/customerHome", component: CustomerHomePage, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/bank/accounts", component: CustomerAccounts, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/bank/transactions/:id", component: CustomerTransactions, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/bank/transactions/new", component: CustomerTransfer, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/register", component: Register },
   { path: "/login", component: Login },
 
