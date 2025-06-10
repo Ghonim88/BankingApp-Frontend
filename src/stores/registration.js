@@ -19,9 +19,9 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
           .then((response) => {
             const data= response.data;
             if (data) {
-              this.userRegistration = data; // Store the registration data in the state
+              this.userRegistration = data;
 
-              resolve(data); // Resolve the promise with the customer data
+              resolve(data); 
             } else {
               reject(new Error('Registration failed, no data returned'));
             }
@@ -30,7 +30,7 @@ export const useCustomerRegistrationStore = defineStore('CustomerRegistrationSto
             // Handle error from API
             this.registrationStatus = 'failed';
             console.error('Registration Error:', error);
-            reject(error); // Reject with error message
+            reject(error); 
           });
       });
     },

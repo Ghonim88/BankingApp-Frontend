@@ -14,7 +14,7 @@ import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
 import Welcome from "@/components/Welcome.vue";
 import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue";
-import CustomerAccounts from "@/components/customerPages/CustomerAccounts.vue";
+import CustomerAccounts from "@/components/customerPages/customerAccounts.vue";
 import CustomerTransactions from "@/components/customerPages/CustomerTransactionsForAccount.vue";
 import CustomerTransfer from "@/components/customerPages/CustomerTransfer.vue";
 

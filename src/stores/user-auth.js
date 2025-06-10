@@ -36,7 +36,7 @@ export const userAuthStore = defineStore('UserAuthStore', {
               this.role = decodedToken.role; 
               localStorage.setItem('role', this.role);
               
-              resolve(data); // Resolve with the response data (e.g., token)
+              resolve(data); 
             } else {
               reject(new Error('Invalid credentials'));
             }
