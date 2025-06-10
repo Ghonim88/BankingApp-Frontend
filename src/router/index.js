@@ -12,7 +12,7 @@ import Forbidden from "../components/Forbidden.vue";
 import NotFound from "../components/NotFound.vue";
 import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
-import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue"; // new component
+import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
 
 
 
@@ -22,6 +22,7 @@ const router = createRouter({
   routes: [
     // Default routes
   { path: "/",redirect: "/login" },
+  {path: "/welcome", component: Welcome}, // Welcome page route
 
   // Customer routes
   { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
@@ -36,7 +37,7 @@ const router = createRouter({
   { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/accounts", component: AllAccounts, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/accounts/:id", component: AccountDetails, meta: { requiresAuth: true, role: "Employee" }, props: true },
-    { path: "/transactions/new", component: EmployeeTransferFunds, meta: { requiresAuth: true, role: "Employee" } },
+
 
     // Error handling routes
   { path: "/forbidden", component: Forbidden },
@@ -61,6 +62,14 @@ router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("role");
 
+const lockedOnHome = localStorage.getItem("lockedOnHome");
+
+  if (lockedOnHome && to.path !== "/home") {
+    console.warn("Navigation blocked: locked on /home");
+    return next("/home");
+  }
+  
+
   // 🚫 Block logged-in users from accessing /register or /login
   if ((to.path === "/register" || to.path === "/login") && token) {
     if (userRole.toLowerCase() === "customer") {
@@ -68,7 +77,7 @@ router.beforeEach(async (to, from, next) => {
     } else if (userRole.toLowerCase() === "employee") {
       return next("/employeeHome");
     } else {
-      return next("/home"); 
+      return next("/welcome"); // Redirect to welcome page if role is unknown
     }
   }
 

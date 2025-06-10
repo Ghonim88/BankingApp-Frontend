@@ -75,6 +75,10 @@ const store = userAuthStore();
 onMounted(async () => {
   await store.fetchUserData(); // ✅ Load user data after login
 });
+onMounted(() => {
+  localStorage.setItem("lockedOnHome", "true");
+  console.log("User locked on home page");
+});
 
 // Access user properties through the `user` object
 const user = computed(() => store.user);
