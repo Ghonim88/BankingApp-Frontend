@@ -87,7 +87,7 @@ const handleDeposit = async () => {
   errorMessage.value = "";
 
   try {
-    const res = await axios.post('/accounts/atm/deposit', {
+    const res = await axios.post('/api/transactions/atm/deposit', {
       accountId: checkingAccount.value.accountId
     });
     result.value = {
@@ -111,4 +111,5 @@ const goBack = () => {
   router.push('/atm');
 };
 </script>
+
 

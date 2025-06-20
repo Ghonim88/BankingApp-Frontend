@@ -96,7 +96,7 @@ const prepareConfirm = (amount) => {
 
 const attemptWithdraw = async () => {
   try {
-    const res = await axios.post('/accounts/atm/withdraw', {
+    const res = await axios.post('/api/transactions/atm/withdraw', {
       accountId: checkingAccount.value.accountId,
       amount: confirmAmount.value
     });
@@ -111,4 +111,5 @@ const goBack = () => {
   router.push('/atm');
 };
 </script>
+
 

@@ -49,14 +49,12 @@
     <div v-if="selectedAccount" class="card p-3 mb-4">
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <strong>{{ selectedAccount.accountType }}</strong
-          ><br />
+          <strong>{{ selectedAccount.accountType }}</strong>
+          <br />
           <small>{{ selectedAccount.iban }}</small>
         </div>
         <div>
-          <span class="fw-bold"
-            >€ {{ selectedAccount.balance?.toFixed(2) }}</span
-          >
+          <span class="fw-bold">€ {{ selectedAccount.balance?.toFixed(2) }}</span>
         </div>
       </div>
     </div>
@@ -98,6 +96,7 @@
             <th>Sender</th>
             <th>Receiver</th>
             <th>Amount (€)</th>
+            <th>Type</th>
           </tr>
         </thead>
         <tbody>
@@ -106,6 +105,7 @@
             <td>{{ tx.senderIban }}</td>
             <td>{{ tx.receiverIban }}</td>
             <td>{{ tx.transactionAmount.toFixed(2) }}</td>
+            <td>{{ tx.transactionType }}</td>
           </tr>
         </tbody>
       </table>
@@ -133,14 +133,13 @@ const decodedToken = jwtDecode(token);
 const userId = decodedToken.userId;
 
 const { customerAccounts } = storeToRefs(accountStore);
-const accountId = ref(route.params.id); // reactive to update on select
+const accountId = ref(route.params.id);
 const selectedAccount = computed(() =>
   customerAccounts.value.find((acc) => acc.accountId == accountId.value)
 );
 
 const transactions = computed(() => transactionsStore.accountTransactions);
 
-// Filter inputs
 const startDate = ref("");
 const endDate = ref("");
 const minAmount = ref("");
@@ -161,7 +160,6 @@ const applyFilters = () => {
 const loadAccountData = () => {
   accountStore.fetchAccountById(accountId.value);
   transactionsStore.fetchAccountTransactions(accountId.value);
-  // Reset filters
   startDate.value = "";
   endDate.value = "";
   minAmount.value = "";
@@ -198,7 +196,6 @@ function newTransfer() {
   border: none;
   color: black;
 }
-
 .btn-primary:hover,
 .btn-primary:focus {
   background-color: #d7b060;
