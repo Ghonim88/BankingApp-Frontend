@@ -7,13 +7,23 @@ export const useCustomerStore = defineStore("CustomerStore", {
     selectedCustomer: null,
     accounts: [],
     transactions: [],
+    paginationInfo: {
+      page: 0,
+      totalPages: 1,
+      totalElements: 0,
+    },
   }),
 
   actions: {
-    async fetchAllCustomers() {
+    async fetchAllCustomers(page = 0, size = 10) {
       try {
-        const res = await axios.get(`/customers`);
-        this.all = res.data;
+        const res = await axios.get(`/customers?page=${page}&size=${size}`);
+        this.all = res.data.content; // Only store the actual list
+        this.paginationInfo = {
+          page: res.data.number,
+          totalPages: res.data.totalPages,
+          totalElements: res.data.totalElements,
+        };
       } catch (err) {
         this.error = err;
         console.log("Failed to fetch all customers: ", err);
@@ -46,10 +56,11 @@ export const useCustomerStore = defineStore("CustomerStore", {
 
     async searchCustomersByName(name) {
       try {
-        const res = await axios.get(`/customers/search?name=${encodeURIComponent(name)}`);
+        const res = await axios.get(
+          `/customers/search?name=${encodeURIComponent(name)}`
+        );
         console.log("this is the found customer data in the store: ", res.data);
         return res.data; // returns a list of { name, iban }
-        
       } catch (err) {
         console.error("Failed to search customers by name:", err);
         throw err;
