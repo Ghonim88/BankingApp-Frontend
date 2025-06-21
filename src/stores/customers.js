@@ -15,10 +15,14 @@ export const useCustomerStore = defineStore("CustomerStore", {
   }),
 
   actions: {
-    async fetchAllCustomers(page = 0, size = 10) {
+    async fetchCustomersByStatus(status = "", page = 0, size = 10) {
       try {
-        const res = await axios.get(`/customers?page=${page}&size=${size}`);
-        this.all = res.data.content; // Only store the actual list
+        const endpoint = status
+          ? `/customers/status/${status.toLowerCase()}?page=${page}&size=${size}`
+          : `/customers?page=${page}&size=${size}`;
+
+        const res = await axios.get(endpoint);
+        this.all = res.data.content;
         this.paginationInfo = {
           page: res.data.number,
           totalPages: res.data.totalPages,
@@ -26,7 +30,7 @@ export const useCustomerStore = defineStore("CustomerStore", {
         };
       } catch (err) {
         this.error = err;
-        console.log("Failed to fetch all customers: ", err);
+        console.log("Failed to fetch customers by status: ", err);
       }
     },
 

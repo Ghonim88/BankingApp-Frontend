@@ -94,11 +94,12 @@ const currentPage = ref(0);
 const pageSize = 10;
 
 onMounted(() => {
-  store.fetchAllCustomers(currentPage.value, pageSize);
+  store.fetchCustomersByStatus(selectedStatus.value, currentPage.value, pageSize);
 });
 
-watch(currentPage, (newPage) => {
-  store.fetchAllCustomers(newPage, pageSize);
+watch([selectedStatus, currentPage], ([status, page]) => {
+  if (page < 0) return;
+  store.fetchCustomersByStatus(status, page, pageSize);
 });
 
 const filteredCustomers = computed(() => {
