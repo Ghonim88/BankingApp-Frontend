@@ -29,6 +29,7 @@
             id="receiver"
             v-model="receiverName"
             class="form-control"
+            :readonly="isSavingsTransfer"
             @input="handleInput"
             @keydown.enter.prevent="searchReceiver"
           />
@@ -168,7 +169,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAccountStore } from "@/stores/accounts";
 import { useCustomerStore } from "@/stores/customers";
@@ -194,6 +195,7 @@ const { customerAccounts } = storeToRefs(accountStore);
 
 const matchingUsers = ref([]);
 const isDropdownVisible = ref(false);
+const isSavingsTransfer = ref(false);
 
 const accountId = route.params.id;
 
@@ -212,12 +214,37 @@ const isValid = computed(() => {
 });
 
 const searchReceiver = async () => {
+  if (isSavingsTransfer.value) return;
+
   try {
     const results = await customerStore.searchCustomersByName(
       receiverName.value
     );
+    
     if (results.length > 0) {
-      matchingUsers.value = results;
+      const ownIbans = customerAccounts.value.map((acc) => acc.iban);
+
+      // Exclude own accounts
+      matchingUsers.value = results.filter(
+        (user) => !ownIbans.includes(user.iban)
+      );
+
+      const sender = customerAccounts.value.find(
+        (acc) => acc.iban === form.value.senderIban
+      );
+
+      if (sender?.accountType.toLowerCase() === "checking") {
+        const savings = customerAccounts.value.find(
+          (acc) => acc.accountType.toLowerCase() === "savings"
+        );
+
+        if (savings) {
+          matchingUsers.value.unshift({
+            fullName: "Your Savings Account",
+            iban: savings.iban,
+          });
+        }
+      }
       isDropdownVisible.value = true;
       message.value = "";
     } else {
@@ -250,6 +277,35 @@ const handleInput = () => {
     searchReceiver();
   }, 300); // delay to prevent rapid calls
 };
+
+watch(
+  () => form.value.senderIban,
+  (newIban) => {
+    const sender = customerAccounts.value.find((acc) => acc.iban === newIban);
+
+    if (sender?.accountType.toLowerCase() === "savings") {
+      const checking = customerAccounts.value.find(
+        (acc) => acc.accountType.toLowerCase() === "checking"
+      );
+
+      if (checking) {
+        form.value.receiverIban = checking.iban;
+        receiverName.value = "Your Checking Account";
+        isSavingsTransfer.value = true;
+        isDropdownVisible.value = false;
+      } else {
+        form.value.receiverIban = "";
+        receiverName.value = "";
+        isSavingsTransfer.value = false;
+      }
+    } else {
+      // Reset when not savings
+      form.value.receiverIban = "";
+      receiverName.value = "";
+      isSavingsTransfer.value = false;
+    }
+  }
+);
 
 const submitTransfer = async () => {
   message.value = "";
