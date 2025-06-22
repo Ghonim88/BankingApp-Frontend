@@ -15,6 +15,7 @@
           <th>Sender</th>
           <th>Receiver</th>
           <th>Amount</th>
+          <th>Type</th>
           <th>Timestamp</th>
           <!-- <th>Initiator</th>
           <th>Type</th> -->
@@ -29,6 +30,7 @@
           <td>{{ transaction.senderIban }}</td>
           <td>{{ transaction.receiverIban }}</td>
           <td>{{ transaction.transactionAmount }}</td>
+          <td>{{ transaction.transactionType }}</td>
           <td>{{ transaction.createdAt }}</td>
         </tr>
       </tbody>

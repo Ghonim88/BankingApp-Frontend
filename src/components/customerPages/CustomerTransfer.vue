@@ -29,8 +29,24 @@
             id="receiver"
             v-model="receiverName"
             class="form-control"
-            @blur="searchReceiver"
+            @input="handleInput"
+            @keydown.enter.prevent="searchReceiver"
           />
+          <ul
+            v-if="isDropdownVisible && matchingUsers.length"
+            class="list-group mt-1"
+            style="z-index: 1000; position: absolute; width: 100%"
+          >
+            <li
+              class="list-group-item list-group-item-action"
+              v-for="user in matchingUsers"
+              :key="user.iban"
+              @click="selectReceiver(user)"
+              style="cursor: pointer"
+            >
+              {{ user.fullName }} - {{ user.iban }}
+            </li>
+          </ul>
         </div>
 
         <div class="mb-3">
@@ -176,6 +192,9 @@ const accountStore = useAccountStore();
 const customerStore = useCustomerStore();
 const { customerAccounts } = storeToRefs(accountStore);
 
+const matchingUsers = ref([]);
+const isDropdownVisible = ref(false);
+
 const accountId = route.params.id;
 
 onMounted(async () => {
@@ -194,24 +213,42 @@ const isValid = computed(() => {
 
 const searchReceiver = async () => {
   try {
-    const accountReceiver = await customerStore.searchCustomersByName(
+    const results = await customerStore.searchCustomersByName(
       receiverName.value
     );
-    console.log("this is the receiver account", accountReceiver);
-
-    if (accountReceiver.length > 0) {
-      form.value.receiverIban = accountReceiver[0].iban;
+    if (results.length > 0) {
+      matchingUsers.value = results;
+      isDropdownVisible.value = true;
       message.value = "";
     } else {
+      matchingUsers.value = [];
+      isDropdownVisible.value = false;
       form.value.receiverIban = "";
       message.value = "Receiver not found.";
       messageType.value = "error";
     }
   } catch (err) {
+    matchingUsers.value = [];
+    isDropdownVisible.value = false;
     form.value.receiverIban = "";
     message.value = "Receiver not found.";
     messageType.value = "error";
   }
+};
+
+const selectReceiver = (user) => {
+  form.value.receiverIban = user.iban;
+  receiverName.value = user.fullName;
+  isDropdownVisible.value = false;
+  matchingUsers.value = [];
+};
+
+let debounceTimer;
+const handleInput = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    searchReceiver();
+  }, 300); // delay to prevent rapid calls
 };
 
 const submitTransfer = async () => {
