@@ -30,14 +30,13 @@ export const userAuthStore = defineStore('UserAuthStore', {
 
             if (data.token) {
               localStorage.setItem('token', data.token);
-              console.log('Login successful, token:', data.token);
               const decodedToken = jwtDecode(data.token);
               this.isLoggedIn = true; // Set logged-in state
               this.token = data.token;
               this.role = decodedToken.role; 
               localStorage.setItem('role', this.role);
               
-              resolve(data); // Resolve with the response data (e.g., token)
+              resolve(data); 
             } else {
               reject(new Error('Invalid credentials'));
             }
@@ -79,10 +78,8 @@ export const userAuthStore = defineStore('UserAuthStore', {
     },
 
     logout() {
-    
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem("lockedOnHome");
+   
+    localStorage.clear(); // Clear all localStorage items
     this.isLoggedIn = false;
     this.user = null; 
     this.role = null;

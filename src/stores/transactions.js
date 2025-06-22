@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia';
-import axios from '@/axios-auth';
+import { defineStore } from "pinia";
+import axios from "@/axios-auth";
 
-export const useTransactionsStore = defineStore('TransactionStore', {
+export const useTransactionsStore = defineStore("TransactionStore", {
   state: () => ({
     allTransactions: [],
     customerTransactions: [],
@@ -20,13 +20,38 @@ export const useTransactionsStore = defineStore('TransactionStore', {
     },
 
     async fetchCustomerTransactions(customerId) {
-      const response = await axios.get(`/api/transactions/customer/${customerId}`);
+      const response = await axios.get(
+        `/api/transactions/customer/${customerId}`
+      );
       this.customerTransactions = response.data;
     },
 
     async fetchAccountTransactions(accountId) {
-      const response = await axios.get(`/accounts/${accountId}/transactions`);
-      this.accountTransactions = response.data;
+      try {
+        const response = await axios.get(
+          `api/transactions/accounts/${accountId}`
+        );
+        this.accountTransactions = response.data;
+      } catch (err) {
+        this.error = err;
+        console.log(
+          "Failed to fetch all transactions for the specific account: ",
+          err
+        );
+      }
     },
-  }
+
+    async filterAccountTransactions(accountId, filterParams) {
+      try {
+        const response = await axios.post(
+          `/api/transactions/accounts/${accountId}/filter`,
+          filterParams
+        );
+        this.accountTransactions = response.data;
+      } catch (err) {
+        this.error = err;
+        console.error("Failed to filter transactions for account:", err);
+      }
+    },
+  },
 });

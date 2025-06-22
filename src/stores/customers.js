@@ -19,39 +19,16 @@ export const useCustomerStore = defineStore("CustomerStore", {
         console.log("Failed to fetch all customers: ", err);
       }
     },
-    
+
     async fetchCustomerDetails(customerId) {
       try {
         const res = await axios.get(`/customers/${customerId}`);
         this.selectedCustomer = res.data;
-        return res.data; // <-- ✅ return the fetched customer data
-
+        return res.data;
       } catch (err) {
         this.error = err;
         console.log("Failed to fetch the selected customer: ", err);
       }
-    },
-
-    async fetchCustomerAccounts(customerId) {
-      try {
-        const res = await axios.get(`/customers/${customerId}/accounts`);
-        this.accounts = res.data;
-      } catch (err) {
-        this.error = err;
-        console.log("Failed to load the customer bank accounts: ", err);
-      }
-      //this one is not working yet since there is no backend endpoint
-    },
-
-    async fetchCustomerTransactions(customerId) {
-      try {
-        const res = await axios.get(`/customers/${customerId}/transactions`);
-        this.transactions = res.data;
-      } catch (err) {
-        this.error = err;
-        console.log("Failed to load the customer transactions: ", err);
-      }
-      //this one not working -> no api endpoint
     },
 
     async updateCustomerAccountStatus(customerId, newStatus) {
@@ -64,6 +41,18 @@ export const useCustomerStore = defineStore("CustomerStore", {
       } catch (error) {
         console.error("Failed to update customer account status:", error);
         throw error;
+      }
+    },
+
+    async searchCustomersByName(name) {
+      try {
+        const res = await axios.get(`/customers/search?name=${encodeURIComponent(name)}`);
+        console.log("this is the found customer data in the store: ", res.data);
+        return res.data; // returns a list of { name, iban }
+        
+      } catch (err) {
+        console.error("Failed to search customers by name:", err);
+        throw err;
       }
     },
   },

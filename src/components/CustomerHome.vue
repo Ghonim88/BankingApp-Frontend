@@ -15,7 +15,7 @@
       <p class="welcome-subtitle">Congrats for Approval</p>
 
       <div class="button-group">
-        <button class="btn">Bank</button>
+        <button class="btn" @click="goToBank">Bank</button>
         <button class="btn">ATM</button>
       </div>
 
@@ -30,11 +30,17 @@
 <script setup>
 import { computed } from 'vue';
 import { userAuthStore } from '@/stores/user-auth';
+import { useRouter } from 'vue-router';
 
 const store = userAuthStore();
+const router = useRouter();
 
 const user = computed(() => store.user);
 const firstName = computed(() => user.value?.firstName || '');
+
+function goToBank (){
+  router.push(`/bank/accounts`);
+}
 </script>
 
 <style scoped>

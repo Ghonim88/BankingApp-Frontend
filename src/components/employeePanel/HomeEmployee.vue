@@ -17,6 +17,14 @@
         >
           Transactions
         </button>
+        <button
+          @click="goToAccounts"
+          class="btn btn-lg fw-semibold text-black"
+          style="background-color: #edcb83;"
+        >
+          Accounts
+        </button>
+
       </div>
     </div>
   </div>
@@ -33,6 +41,9 @@ const goToCustomers = () => {
 
 const goToTransactions = () => {
   router.push('/transactions'); // Adjust route as needed
+};
+const goToAccounts = () => {
+  router.push('/accounts'); // Adjust route as needed
 };
 </script>
 

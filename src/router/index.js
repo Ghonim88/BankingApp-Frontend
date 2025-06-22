@@ -12,9 +12,11 @@ import Forbidden from "../components/Forbidden.vue";
 import NotFound from "../components/NotFound.vue";
 import AllAccounts from "@/components/employeePanel/Accounts.vue";
 import AccountDetails from "@/components/employeePanel/AccountDetails.vue";
-import Welcome from "@/components/Welcome.vue"; // Assuming you have a Welcome component
-
-
+import Welcome from "@/components/Welcome.vue";
+import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFunds.vue";
+import CustomerAccounts from "@/components/customerPages/customerAccounts.vue";
+import CustomerTransactions from "@/components/customerPages/CustomerTransactionsForAccount.vue";
+import CustomerTransfer from "@/components/customerPages/CustomerTransfer.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,11 +24,14 @@ const router = createRouter({
   routes: [
     // Default routes
   { path: "/",redirect: "/login" },
-  {path: "/welcome", component: Welcome}, // Welcome page route
+  {path: "/welcome", component: Welcome}, 
 
   // Customer routes
   { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/customerHome", component: CustomerHomePage, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/bank/accounts", component: CustomerAccounts, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/bank/transactions/:id", component: CustomerTransactions, meta: { requiresAuth: true, role: "Customer" } },
+  { path: "/bank/transactions/new", component: CustomerTransfer, meta: { requiresAuth: true, role: "Customer" } },
   { path: "/register", component: Register },
   { path: "/login", component: Login },
 
@@ -37,7 +42,7 @@ const router = createRouter({
   { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/accounts", component: AllAccounts, meta: { requiresAuth: true, role: "Employee" } },
   { path: "/accounts/:id", component: AccountDetails, meta: { requiresAuth: true, role: "Employee" }, props: true },
-
+    { path: "/transactions/new", component: EmployeeTransferFunds, meta: { requiresAuth: true, role: "Employee" } },
 
     // Error handling routes
   { path: "/forbidden", component: Forbidden },
@@ -69,9 +74,10 @@ const lockedOnHome = localStorage.getItem("lockedOnHome");
     return next("/home");
   }
   
+  const normalizedPath = to.path.toLowerCase();
 
   // 🚫 Block logged-in users from accessing /register or /login
-  if ((to.path === "/register" || to.path === "/login") && token) {
+  if ((normalizedPath === "/register" || normalizedPath === "/login") && token) {
     if (userRole.toLowerCase() === "customer") {
       return next("/customerHome");
     } else if (userRole.toLowerCase() === "employee") {
