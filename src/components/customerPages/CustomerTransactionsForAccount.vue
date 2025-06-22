@@ -54,7 +54,9 @@
           <small>{{ selectedAccount.iban }}</small>
         </div>
         <div>
-          <span class="fw-bold">€ {{ selectedAccount.balance?.toFixed(2) }}</span>
+          <span class="fw-bold"
+            >€ {{ selectedAccount.balance?.toFixed(2) }}</span
+          >
         </div>
       </div>
     </div>
@@ -111,6 +113,28 @@
       </table>
     </div>
     <div v-else class="text-muted">No transactions to display.</div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4" v-if="paginationInfo">
+      <button
+        class="btn btn-secondary"
+        :disabled="paginationInfo.page <= 0"
+        @click="currentPage--"
+      >
+        Previous
+      </button>
+
+      <div >
+        Page {{ paginationInfo.page + 1 }} of {{ paginationInfo.totalPages }}
+      </div>
+
+      <button
+        class="btn btn-secondary"
+        :disabled="paginationInfo.page >= paginationInfo.totalPages - 1"
+        @click="currentPage++"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>
 
@@ -132,7 +156,7 @@ const token = localStorage.getItem("token");
 const decodedToken = jwtDecode(token);
 const userId = decodedToken.userId;
 
-const { customerAccounts } = storeToRefs(accountStore);
+const { customerAccounts, paginationInfo } = storeToRefs(accountStore);
 const accountId = ref(route.params.id);
 const selectedAccount = computed(() =>
   customerAccounts.value.find((acc) => acc.accountId == accountId.value)
@@ -145,6 +169,8 @@ const endDate = ref("");
 const minAmount = ref("");
 const maxAmount = ref("");
 const iban = ref("");
+const currentPage = ref(0);
+const pageSize = 10;
 
 const applyFilters = () => {
   const filters = {
@@ -154,7 +180,12 @@ const applyFilters = () => {
     maxAmount: maxAmount.value ? parseFloat(maxAmount.value) : null,
     iban: iban.value || null,
   };
-  transactionsStore.filterAccountTransactions(accountId.value, filters);
+  transactionsStore.filterAccountTransactions(
+    accountId.value,
+    filters,
+    currentPage.value,
+    pageSize
+  );
 };
 
 const loadAccountData = () => {
@@ -174,6 +205,10 @@ onMounted(() => {
 watch(accountId, () => {
   router.push({ path: `/bank/transactions/${accountId.value}` });
   loadAccountData();
+});
+
+watch(currentPage, () => {
+  applyFilters();
 });
 
 onMounted(() => {
