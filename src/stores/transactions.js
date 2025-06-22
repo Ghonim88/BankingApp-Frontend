@@ -6,13 +6,23 @@ export const useTransactionsStore = defineStore("TransactionStore", {
     allTransactions: [],
     customerTransactions: [],
     accountTransactions: [],
+    paginationInfo: {
+      page: 0,
+      totalPages: 1,
+      totalElements: 0,
+    },
   }),
 
   actions: {
-    async fetchAllTransactions() {
+    async fetchAllTransactions(page = 0, size = 10) {
       try {
-        const res = await axios.get(`/api/transactions`);
-        this.allTransactions = res.data;
+        const res = await axios.get(`/api/transactions?page=${page}&size=${size}`);
+        this.allTransactions = res.data.content;
+        this.paginationInfo = {
+          page: res.data.number,
+          totalPages: res.data.totalPages,
+          totalElements: res.data.totalElements,
+        };
       } catch (err) {
         this.error = err;
         console.log("Failed to fetch all transactions: ", err);
