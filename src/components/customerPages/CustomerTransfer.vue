@@ -234,8 +234,14 @@ const submitTransfer = async () => {
       receiverIban: "",
       amount: 0,
     };
+    const fromAccount = customerAccounts.value.find(
+      (acc) => acc.iban === form.value.senderIban
+    );
+
+    const redirectId = fromAccount?.accountId || null;
+
     router.push({
-      path: `/bank/transactions/${accountId}`,
+      path: `/bank/transactions/${redirectId}`,
       query: { successMessage: "Transfer completed successfully." },
     });
   } catch (err) {
@@ -245,9 +251,15 @@ const submitTransfer = async () => {
 };
 
 const cancelTransfer = () => {
+  const fromAccount = customerAccounts.value.find(
+    (acc) => acc.iban === form.value.senderIban
+  );
+
+  const redirectId = fromAccount?.accountId || 0;
+
   router.push({
-    path: `/bank/transactions/${accountId}`,
-    query: { successMessage: "Transfer operation cancelled." }
+    path: `/bank/transactions/${redirectId}`,
+    query: { successMessage: "Transfer operation cancelled." },
   });
 };
 </script>
