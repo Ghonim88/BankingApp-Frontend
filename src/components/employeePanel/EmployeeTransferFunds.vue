@@ -128,9 +128,10 @@ const submitTransfer = async () => {
       amount: 0,
     };
   } catch (err) {
-    message.value = 'Transfer failed: ' + (err.response?.data || err.message);
+    message.value = err.response?.data?.message || 'Transfer failed: ' + err.message;
     messageType.value = 'error';
   }
+
 };
 </script>
 
