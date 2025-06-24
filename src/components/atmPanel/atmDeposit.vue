@@ -15,13 +15,13 @@
         </div>
       </div>
 
-      <!-- Step 2: Confirm inserted amount -->
+      <!-- Step 2: Enter amount -->
       <div v-else-if="step === 2">
-        <h4 class="mb-4">Amount inserted:</h4>
-        <input type="text" class="form-control text-center mb-4" value="€50" readonly />
+        <h4 class="mb-4">Enter amount to deposit (€):</h4>
+        <input type="number" v-model.number="amount" class="form-control text-center mb-4" min="1" step="0.01" />
 
         <div class="d-flex flex-column align-items-end gap-2">
-          <button class="btn btn-warning fw-semibold px-4" @click="handleDeposit" :disabled="loading">
+          <button class="btn btn-warning fw-semibold px-4" @click="handleDeposit" :disabled="loading || !amount || amount <= 0">
             {{ loading ? 'Depositing...' : 'Deposit' }}
           </button>
           <button class="btn btn-outline-secondary px-4" @click="goBack">Cancel</button>
@@ -29,21 +29,20 @@
       </div>
 
       <!-- Step 3: Success screen -->
-    <div v-else-if="step === 3">
+      <div v-else-if="step === 3">
         <h3 class="mb-4 text-success">Transaction successful</h3>
 
         <div class="text-start ps-3">
-            <p class="mb-2 text-dark"><strong>Account number:</strong><br /> <span class="text-dark">{{ result.iban }}</span></p>
-            <p class="mb-2 text-dark"><strong>Amount inserted:</strong><br /> <span class="text-dark">€50</span></p>
-            <p class="mb-0 text-dark"><strong>New balance:</strong><br /> <span class="text-dark">€{{ result.newBalance.toFixed(2) }}</span></p>
+          <p class="mb-2 text-dark"><strong>Account number:</strong><br /> <span class="text-dark">{{ result.iban }}</span></p>
+          <p class="mb-2 text-dark"><strong>Amount inserted:</strong><br /> <span class="text-dark">€{{ result.amount.toFixed(2) }}</span></p>
+          <p class="mb-0 text-dark"><strong>New balance:</strong><br /> <span class="text-dark">€{{ result.newBalance.toFixed(2) }}</span></p>
         </div>
 
         <div class="d-flex flex-column align-items-end gap-2 mt-4">
-            <button class="btn btn-warning fw-semibold px-4" @click="restart">New transaction</button>
-            <button class="btn btn-outline-secondary px-4" @click="goBack">Exit</button>
+          <button class="btn btn-warning fw-semibold px-4" @click="restart">New transaction</button>
+          <button class="btn btn-outline-secondary px-4" @click="goBack">Exit</button>
         </div>
-    </div>
-
+      </div>
 
       <!-- Error -->
       <div v-if="errorMessage" class="alert alert-danger mt-3">
@@ -64,9 +63,10 @@ const step = ref(1);
 const loading = ref(false);
 const errorMessage = ref('');
 const userId = jwtDecode(localStorage.getItem("token")).userId;
+const amount = ref(50);  // default value
 
 const checkingAccount = ref(null);
-const result = ref({ iban: '', newBalance: 0 });
+const result = ref({ iban: '', amount: 0, newBalance: 0 });
 
 onMounted(async () => {
   try {
@@ -78,8 +78,8 @@ onMounted(async () => {
 });
 
 const handleDeposit = async () => {
-  if (!checkingAccount.value) {
-    errorMessage.value = "No checking account found.";
+  if (!checkingAccount.value || amount.value <= 0) {
+    errorMessage.value = "Invalid amount.";
     return;
   }
 
@@ -88,10 +88,12 @@ const handleDeposit = async () => {
 
   try {
     const res = await axios.post('/api/transactions/atm/deposit', {
-      accountId: checkingAccount.value.accountId
+      accountId: checkingAccount.value.accountId,
+      amount: amount.value
     });
     result.value = {
       iban: checkingAccount.value.iban,
+      amount: amount.value,
       newBalance: res.data.newBalance
     };
     step.value = 3;
@@ -104,6 +106,7 @@ const handleDeposit = async () => {
 
 const restart = () => {
   step.value = 1;
+  amount.value = 50;  // reset to default
   errorMessage.value = '';
 };
 
@@ -111,5 +114,3 @@ const goBack = () => {
   router.push('/atm');
 };
 </script>
-
-
