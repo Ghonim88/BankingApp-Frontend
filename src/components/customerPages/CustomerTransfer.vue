@@ -29,8 +29,25 @@
             id="receiver"
             v-model="receiverName"
             class="form-control"
-            @blur="searchReceiver"
+            :readonly="isSavingsTransfer"
+            @input="handleInput"
+            @keydown.enter.prevent="searchReceiver"
           />
+          <ul
+            v-if="isDropdownVisible && matchingUsers.length"
+            class="list-group mt-1"
+            style="z-index: 1000; position: absolute; width: 100%"
+          >
+            <li
+              class="list-group-item list-group-item-action"
+              v-for="user in matchingUsers"
+              :key="user.iban"
+              @click="selectReceiver(user)"
+              style="cursor: pointer"
+            >
+              {{ user.fullName }} - {{ user.iban }}
+            </li>
+          </ul>
         </div>
 
         <div class="mb-3">
@@ -152,7 +169,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAccountStore } from "@/stores/accounts";
 import { useCustomerStore } from "@/stores/customers";
@@ -176,6 +193,10 @@ const accountStore = useAccountStore();
 const customerStore = useCustomerStore();
 const { customerAccounts } = storeToRefs(accountStore);
 
+const matchingUsers = ref([]);
+const isDropdownVisible = ref(false);
+const isSavingsTransfer = ref(false);
+
 const accountId = route.params.id;
 
 onMounted(async () => {
@@ -193,26 +214,98 @@ const isValid = computed(() => {
 });
 
 const searchReceiver = async () => {
+  if (isSavingsTransfer.value) return;
+
   try {
-    const accountReceiver = await customerStore.searchCustomersByName(
+    const results = await customerStore.searchCustomersByName(
       receiverName.value
     );
-    console.log("this is the receiver account", accountReceiver);
+    
+    if (results.length > 0) {
+      const ownIbans = customerAccounts.value.map((acc) => acc.iban);
 
-    if (accountReceiver.length > 0) {
-      form.value.receiverIban = accountReceiver[0].iban;
+      // Exclude own accounts
+      matchingUsers.value = results.filter(
+        (user) => !ownIbans.includes(user.iban)
+      );
+
+      const sender = customerAccounts.value.find(
+        (acc) => acc.iban === form.value.senderIban
+      );
+
+      if (sender?.accountType.toLowerCase() === "checking") {
+        const savings = customerAccounts.value.find(
+          (acc) => acc.accountType.toLowerCase() === "savings"
+        );
+
+        if (savings) {
+          matchingUsers.value.unshift({
+            fullName: "Your Savings Account",
+            iban: savings.iban,
+          });
+        }
+      }
+      isDropdownVisible.value = true;
       message.value = "";
     } else {
+      matchingUsers.value = [];
+      isDropdownVisible.value = false;
       form.value.receiverIban = "";
       message.value = "Receiver not found.";
       messageType.value = "error";
     }
   } catch (err) {
+    matchingUsers.value = [];
+    isDropdownVisible.value = false;
     form.value.receiverIban = "";
     message.value = "Receiver not found.";
     messageType.value = "error";
   }
 };
+
+const selectReceiver = (user) => {
+  form.value.receiverIban = user.iban;
+  receiverName.value = user.fullName;
+  isDropdownVisible.value = false;
+  matchingUsers.value = [];
+};
+
+let debounceTimer;
+const handleInput = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    searchReceiver();
+  }, 300); // delay to prevent rapid calls
+};
+
+watch(
+  () => form.value.senderIban,
+  (newIban) => {
+    const sender = customerAccounts.value.find((acc) => acc.iban === newIban);
+
+    if (sender?.accountType.toLowerCase() === "savings") {
+      const checking = customerAccounts.value.find(
+        (acc) => acc.accountType.toLowerCase() === "checking"
+      );
+
+      if (checking) {
+        form.value.receiverIban = checking.iban;
+        receiverName.value = "Your Checking Account";
+        isSavingsTransfer.value = true;
+        isDropdownVisible.value = false;
+      } else {
+        form.value.receiverIban = "";
+        receiverName.value = "";
+        isSavingsTransfer.value = false;
+      }
+    } else {
+      // Reset when not savings
+      form.value.receiverIban = "";
+      receiverName.value = "";
+      isSavingsTransfer.value = false;
+    }
+  }
+);
 
 const submitTransfer = async () => {
   message.value = "";
@@ -234,8 +327,14 @@ const submitTransfer = async () => {
       receiverIban: "",
       amount: 0,
     };
+    const fromAccount = customerAccounts.value.find(
+      (acc) => acc.iban === form.value.senderIban
+    );
+
+    const redirectId = fromAccount?.accountId || null;
+
     router.push({
-      path: `/bank/transactions/${accountId}`,
+      path: `/bank/transactions/${redirectId}`,
       query: { successMessage: "Transfer completed successfully." },
     });
   } catch (err) {
@@ -245,9 +344,15 @@ const submitTransfer = async () => {
 };
 
 const cancelTransfer = () => {
+  const fromAccount = customerAccounts.value.find(
+    (acc) => acc.iban === form.value.senderIban
+  );
+
+  const redirectId = fromAccount?.accountId || 0;
+
   router.push({
-    path: `/bank/transactions/${accountId}`,
-    query: { successMessage: "Transfer operation cancelled." }
+    path: `/bank/transactions/${redirectId}`,
+    query: { successMessage: "Transfer operation cancelled." },
   });
 };
 </script>

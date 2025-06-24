@@ -53,38 +53,68 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <button
+        class="btn btn-secondary"
+        :disabled="paginationInfo.page <= 0"
+        @click="currentPage--"
+      >
+        Previous
+      </button>
+
+      <div>
+        Page {{ paginationInfo.page + 1 }} of {{ paginationInfo.totalPages }}
+      </div>
+
+      <button
+        class="btn btn-secondary"
+        :disabled="paginationInfo.page >= paginationInfo.totalPages - 1"
+        @click="currentPage++"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCustomerStore } from "@/stores/customers";
 import { storeToRefs } from "pinia";
 
 const store = useCustomerStore();
-const { all: customers } = storeToRefs(store);
+const { all: customers, paginationInfo } = storeToRefs(store);
 const router = useRouter();
 
 const selectedStatus = ref("");
-const searchQuery = ref('');
+const searchQuery = ref("");
+const currentPage = ref(0);
+const pageSize = 10;
 
 onMounted(() => {
-  store.fetchAllCustomers();
+  store.fetchCustomersByStatus(selectedStatus.value, currentPage.value, pageSize);
 });
 
+watch([selectedStatus, currentPage], ([status, page]) => {
+  if (page < 0) return;
+  store.fetchCustomersByStatus(status, page, pageSize);
+});
 
 const filteredCustomers = computed(() => {
+  if (!Array.isArray(customers.value)) return [];
+
   const query = searchQuery.value.toLowerCase();
   const statusFilter = selectedStatus.value;
 
   return customers.value.filter((customer) => {
     const fullName = `${customer.firstName} ${customer.lastName}`.toLowerCase();
 
-    const matchesQuery =
-      fullName.includes(query) || status.includes(query);
+    const matchesQuery = fullName.includes(query) || status.includes(query);
 
-    const matchesStatus = !statusFilter || customer.accountStatus === statusFilter;
+    const matchesStatus =
+      !statusFilter || customer.accountStatus === statusFilter;
 
     return matchesQuery && matchesStatus;
   });

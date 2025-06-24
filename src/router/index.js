@@ -17,48 +17,54 @@ import EmployeeTransferFunds from "@/components/employeePanel/EmployeeTransferFu
 import CustomerAccounts from "@/components/customerPages/customerAccounts.vue";
 import CustomerTransactions from "@/components/customerPages/CustomerTransactionsForAccount.vue";
 import CustomerTransfer from "@/components/customerPages/CustomerTransfer.vue";
+import ATMHome from "@/components/atmPanel/atmHome.vue";
+import ATMDeposit from "@/components/atmPanel/atmDeposit.vue";
+import ATMWithdraw from "@/components/atmPanel/atmWithdraw.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   //history: createWebHistory('/BankingApp-Frontend/'),
   routes: [
     // Default routes
-  { path: "/",redirect: "/login" },
-  {path: "/welcome", component: Welcome}, 
+    { path: "/", redirect: "/login" },
+    { path: "/welcome", component: Welcome },
 
-  // Customer routes
-  { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
-  { path: "/customerHome", component: CustomerHomePage, meta: { requiresAuth: true, role: "Customer" } },
-  { path: "/bank/accounts", component: CustomerAccounts, meta: { requiresAuth: true, role: "Customer" } },
-  { path: "/bank/transactions/:id", component: CustomerTransactions, meta: { requiresAuth: true, role: "Customer" } },
-  { path: "/bank/transactions/new", component: CustomerTransfer, meta: { requiresAuth: true, role: "Customer" } },
-  { path: "/register", component: Register },
-  { path: "/login", component: Login },
-
+    // Customer routes
+    { path: "/home", component: Home, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/customerHome", component: CustomerHomePage, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/bank/accounts", component: CustomerAccounts, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/bank/transactions/:id", component: CustomerTransactions, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/bank/transactions/new", component: CustomerTransfer, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/register", component: Register },
+    { path: "/login", component: Login },
+    { path: "/atm", component: ATMHome, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/atm/deposit", component: ATMDeposit, meta: { requiresAuth: true, role: "Customer" } },
+    { path: "/atm/withdraw", component: ATMWithdraw, meta: { requiresAuth: true, role: "Customer" } },
 
     // Employee routes
-  { path: "/employeeHome", component: EmployeeHomePage, meta: { requiresAuth: true, role: "Employee" } },
-  { path: "/transactions", component: EmployeeAllTransactions, meta: { requiresAuth: true, role: "Employee" } },
-  { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
-  { path: "/accounts", component: AllAccounts, meta: { requiresAuth: true, role: "Employee" } },
-  { path: "/accounts/:id", component: AccountDetails, meta: { requiresAuth: true, role: "Employee" }, props: true },
+    { path: "/employeeHome", component: EmployeeHomePage, meta: { requiresAuth: true, role: "Employee" } },
+    { path: "/transactions", component: EmployeeAllTransactions, meta: { requiresAuth: true, role: "Employee" } },
+    { path: "/customers", component: AllCustomers, meta: { requiresAuth: true, role: "Employee" } },
+    { path: "/accounts", component: AllAccounts, meta: { requiresAuth: true, role: "Employee" } },
+    { path: "/accounts/:id", component: AccountDetails, meta: { requiresAuth: true, role: "Employee" }, props: true },
     { path: "/transactions/new", component: EmployeeTransferFunds, meta: { requiresAuth: true, role: "Employee" } },
 
     // Error handling routes
-  { path: "/forbidden", component: Forbidden },
-  { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
+    { path: "/forbidden", component: Forbidden },
+    { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 
-  
-    { path: "/customers/:id", component: CustomerIndividualPage,
+    {
+      path: "/customers/:id", component: CustomerIndividualPage,
       meta: { requiresAuth: true, role: "Employee" },
-       props: true },
+      props: true
+    },
     {
       path: "/customers/:id/approve",
       component: ApproveCustomerAccount,
       meta: { requiresAuth: true, role: "Employee" },
       props: true,
     },
-    
+
   ],
 });
 
@@ -67,13 +73,13 @@ router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("role");
 
-const lockedOnHome = localStorage.getItem("lockedOnHome");
+  const lockedOnHome = localStorage.getItem("lockedOnHome");
 
   if (lockedOnHome && to.path !== "/home") {
     console.warn("Navigation blocked: locked on /home");
     return next("/home");
   }
-  
+
   const normalizedPath = to.path.toLowerCase();
 
   // 🚫 Block logged-in users from accessing /register or /login

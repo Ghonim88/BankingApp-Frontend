@@ -16,7 +16,7 @@
 
       <div class="button-group">
         <button class="btn" @click="goToBank">Bank</button>
-        <button class="btn">ATM</button>
+        <button class="btn" @click="goToATM">ATM</button>
       </div>
 
       <div class="user-info" v-if="firstName">
@@ -41,6 +41,11 @@ const firstName = computed(() => user.value?.firstName || '');
 function goToBank (){
   router.push(`/bank/accounts`);
 }
+
+function goToATM() {
+  router.push(`/atm`);
+}
+
 </script>
 
 <style scoped>
