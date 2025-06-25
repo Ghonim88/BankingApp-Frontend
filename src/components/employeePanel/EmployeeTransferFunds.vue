@@ -38,11 +38,6 @@
         <p style="color: black !important;"><strong>Amount:</strong> €{{ form.amount.toFixed(2) }}</p>
       </div>
 
-
-
-
-
-
       <!-- Buttons -->
       <div class="text-end mt-3 d-flex justify-content-between">
         <button
@@ -82,8 +77,14 @@
 <script setup>
 import { ref, computed } from 'vue';
 import axios from '@/axios-auth';
+import { jwtDecode } from "jwt-decode";
 
 const step = ref(1);
+
+const token = localStorage.getItem("token");
+const decodedToken = jwtDecode(token);
+const userId = decodedToken.userId;
+
 const form = ref({
   senderIban: '',
   receiverIban: '',
@@ -108,7 +109,8 @@ const submitTransfer = async () => {
   const payload = {
     fromIban: form.value.senderIban,
     toIban: form.value.receiverIban,
-    amount: form.value.amount
+    amount: form.value.amount,
+    initiatorId: userId,
   };
 
   try {
@@ -128,9 +130,10 @@ const submitTransfer = async () => {
       amount: 0,
     };
   } catch (err) {
-    message.value = 'Transfer failed: ' + (err.response?.data || err.message);
+    message.value = err.response?.data?.message || 'Transfer failed: ' + err.message;
     messageType.value = 'error';
   }
+
 };
 </script>
 
