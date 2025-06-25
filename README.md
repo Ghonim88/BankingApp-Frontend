@@ -3,14 +3,14 @@
 This project is the frontend working application for a Banking API. 
 
 ## Contributors:
-Bianca Burlacu
-Abdelrahman Ghonim
-Wouter Altepost
-Fatmanur Vardar
-
-> **Note:** This application runs on its own, but without the backend, you will not be able to test anything or navigate through the pages
+- Bianca Burlacu
+- Abdelrahman Ghonim
+- Wouter Altepost
+- Fatmanur Vardar
 
 ## Project Setup
+
+> **Note:** This application runs on its own, but without the backend, you will not be able to test anything or navigate through the pages
 
 ```sh
 npm install
