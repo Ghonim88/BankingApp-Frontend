@@ -12,13 +12,15 @@
       <thead>
         <tr>
           <th>Transaction id</th>
-          <th>Sender</th>
-          <th>Receiver</th>
+          <th>Sender Name</th>
+          <th>Sender Iban</th>
+          <th>Receiver Name</th>
+          <th>Receiver Iban</th>
           <th>Amount</th>
           <th>Type</th>
           <th>Timestamp</th>
-          <!-- <th>Initiator</th>
-          <th>Type</th> -->
+          <th>Initiator Role</th>
+          <th>Initiator Name</th>
         </tr>
       </thead>
       <tbody>
@@ -26,12 +28,16 @@
           v-for="transaction in transactions"
           :key="transaction.transactionId"
         >
-          <td>{{ transaction.transactionId }}</td>
-          <td>{{ transaction.senderIban }}</td>
-          <td>{{ transaction.receiverIban }}</td>
-          <td>{{ transaction.transactionAmount }}</td>
+          <td>{{ transaction.id }}</td>
+          <td>{{ transaction.fromAccountHolderName }}</td>
+          <td>{{ transaction.fromIban }}</td>
+          <td>{{ transaction.toAccountHolderName }}</td>
+          <td>{{ transaction.toIban }}</td>
+          <td>{{ transaction.amount }}</td>
           <td>{{ transaction.transactionType }}</td>
           <td>{{ transaction.createdAt }}</td>
+          <td>{{ transaction.initiatorRole }}</td>
+          <td>{{ transaction.initiatorName }}</td>
         </tr>
       </tbody>
     </table>

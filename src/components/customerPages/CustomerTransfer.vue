@@ -314,7 +314,9 @@ const submitTransfer = async () => {
     fromIban: form.value.senderIban,
     toIban: form.value.receiverIban,
     amount: form.value.amount,
+    initiatorId: userId,
   };
+
   try {
     await axios.post("/api/transactions/transfer", payload, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
