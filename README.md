@@ -3,8 +3,8 @@
 This project is the frontend working application for a Banking API. 
 
 ## Contributors:
-- Bianca Burlacu
 - Abdelrahman Ghonim
+- Bianca Burlacu
 - Wouter Altepost
 - Fatmanur Vardar
 
